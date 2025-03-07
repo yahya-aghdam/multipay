@@ -1,0 +1,22 @@
+services:
+  multipay: # The service for your authentication application
+    build: 
+      context: . # Use the current directory for the build context
+    ports: 
+      - "50051:50051" # Map host port 50051 to container port 50051 for gRPC
+    env_file: 
+      - ./src/config/.env # Load environment variables from the specified .env file
+    depends_on: 
+      - jenkins # Ensure the `jenkins` service starts before `multipay`
+
+  jenkins: # Jenkins service configuration
+    image: jenkins/jenkins:lts # Use the Long-Term Support (LTS) version of Jenkins
+    container_name: jenkins # Name the container "jenkins" for easy identification
+    ports: 
+      - "8080:8080" # Map host port 8080 to container port 8080 for Jenkins web UI
+      - "50051:50000" # Map host port 50000 to container port 50000 for Jenkins agents
+    volumes: 
+      - jenkins_home:/var/jenkins_home # Persist Jenkins data using a named volume
+
+volumes:
+  jenkins_home: # Named volume for persisting Jenkins data
