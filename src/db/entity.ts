@@ -1,14 +1,13 @@
 import { Entity, PrimaryKey, Property, Index } from '@mikro-orm/core';
 import { randomUUID } from 'crypto';
-import { multiPayTableName } from '../config/constants';
 
 
-// Define the MultiPay entity class with MikroORM annotations
-@Entity({ tableName: multiPayTableName }) // This decorator specifies that the class is an entity with a custom table name
-export class MultiPay {
 
-    @PrimaryKey() // Marks this field as the primary key for the entity
-    _id: string = randomUUID(); // Automatically generates a unique ID for each record using UUID
+@Entity() 
+export class Payment {
+
+    @PrimaryKey() 
+    _id: string = randomUUID();
 
     @Index() 
     @Property() 
@@ -34,4 +33,28 @@ export class MultiPay {
 
     @Property() 
     is_confirmed: boolean = false
+}
+
+
+@Entity() 
+export class Wallets {
+
+    @PrimaryKey() 
+    _id: string = randomUUID(); 
+
+    @Index() 
+    @Property() 
+    address!: string; 
+
+    @Property() 
+    mnemonic!: string; 
+
+    @Property()
+    coin!: string; 
+
+    @Property() 
+    is_open: boolean = true
+
+    @Property()
+    useable_time!: string;
 }

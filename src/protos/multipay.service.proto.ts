@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 
 import { ServerUnaryCall, sendUnaryData } from "@grpc/grpc-js";
 import { CreatePaymentRequest, CreatePaymentResult, VerifyPaymentRequest, VerifyPaymentResult } from "./multipay";
@@ -12,7 +13,7 @@ export async function createPayment(
 
 
 
-    callback(null, tokenResult)
+    // callback(null, tokenResult)
 
 }
 // Auth service for gRPC
@@ -25,6 +26,6 @@ export async function verifyPayment(
 
 
 
-    callback(null, vaerfyResult)
+    // callback(null, vaerfyResult)
 
 }
