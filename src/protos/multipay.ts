@@ -25,7 +25,6 @@ export const protobufPackage = "multipay";
 export interface CreatePaymentRequest {
   coin: string;
   amount: string;
-  expiration: number;
   clientId: string;
 }
 
@@ -55,7 +54,7 @@ export interface VerifyPaymentResult {
 }
 
 function createBaseCreatePaymentRequest(): CreatePaymentRequest {
-  return { coin: "", amount: "", expiration: 0, clientId: "" };
+  return { coin: "", amount: "", clientId: "" };
 }
 
 export const CreatePaymentRequest: MessageFns<CreatePaymentRequest> = {
@@ -66,11 +65,8 @@ export const CreatePaymentRequest: MessageFns<CreatePaymentRequest> = {
     if (message.amount !== "") {
       writer.uint32(18).string(message.amount);
     }
-    if (message.expiration !== 0) {
-      writer.uint32(24).int32(message.expiration);
-    }
     if (message.clientId !== "") {
-      writer.uint32(34).string(message.clientId);
+      writer.uint32(26).string(message.clientId);
     }
     return writer;
   },
@@ -99,15 +95,7 @@ export const CreatePaymentRequest: MessageFns<CreatePaymentRequest> = {
           continue;
         }
         case 3: {
-          if (tag !== 24) {
-            break;
-          }
-
-          message.expiration = reader.int32();
-          continue;
-        }
-        case 4: {
-          if (tag !== 34) {
+          if (tag !== 26) {
             break;
           }
 
@@ -127,7 +115,6 @@ export const CreatePaymentRequest: MessageFns<CreatePaymentRequest> = {
     return {
       coin: isSet(object.coin) ? globalThis.String(object.coin) : "",
       amount: isSet(object.amount) ? globalThis.String(object.amount) : "",
-      expiration: isSet(object.expiration) ? globalThis.Number(object.expiration) : 0,
       clientId: isSet(object.clientId) ? globalThis.String(object.clientId) : "",
     };
   },
@@ -139,9 +126,6 @@ export const CreatePaymentRequest: MessageFns<CreatePaymentRequest> = {
     }
     if (message.amount !== "") {
       obj.amount = message.amount;
-    }
-    if (message.expiration !== 0) {
-      obj.expiration = Math.round(message.expiration);
     }
     if (message.clientId !== "") {
       obj.clientId = message.clientId;
@@ -156,7 +140,6 @@ export const CreatePaymentRequest: MessageFns<CreatePaymentRequest> = {
     const message = createBaseCreatePaymentRequest();
     message.coin = object.coin ?? "";
     message.amount = object.amount ?? "";
-    message.expiration = object.expiration ?? 0;
     message.clientId = object.clientId ?? "";
     return message;
   },

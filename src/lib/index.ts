@@ -2,6 +2,7 @@
 import { MongoDriver } from '@mikro-orm/mongodb';
 import { MySqlDriver } from '@mikro-orm/mysql';
 import { PostgreSqlDriver } from '@mikro-orm/postgresql';
+import { PAYMENT_EXPIRATION_TIME_MIN } from '../config/dotenv';
 
 /**
  * Checks whether a given object is empty.
@@ -49,4 +50,13 @@ export function validateEnv() {
         console.error(`Missing required environment variables: ${missingVars.join(', ')}`);
         process.exit(1);
     }
+}
+
+export function nowUnixStr(): string {
+    return Date.now().toString()
+}
+
+export function expirationTimeStr(): string {
+    const date = Date.now() + (+PAYMENT_EXPIRATION_TIME_MIN * 60 * 1000)
+    return date.toString()
 }

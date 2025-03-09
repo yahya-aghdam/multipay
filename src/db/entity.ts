@@ -11,7 +11,7 @@ export class Payment {
 
     @Index() 
     @Property() 
-    payment_id!: string; 
+    paymentId!: string; 
 
     @Property() 
     coin!: string; 
@@ -23,16 +23,16 @@ export class Payment {
     expiration!: string; 
 
     @Property() 
-    client_id!: string; 
+    clientId!: string; 
 
     @Property() 
     address!: string; 
 
     @Property() 
-    is_paid: boolean = false
+    isPaid: boolean = false
 
     @Property() 
-    is_confirmed: boolean = false
+    isConfirmed: boolean = false
 }
 
 
@@ -51,10 +51,4 @@ export class Wallets {
 
     @Property()
     coin!: string; 
-
-    @Property() 
-    is_open: boolean = true
-
-    @Property()
-    useable_time!: string;
 }

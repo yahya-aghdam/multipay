@@ -6,8 +6,7 @@ package multipay;
 message CreatePaymentRequest {
     string coin = 1;
     string amount = 2;
-    int32 expiration = 3;
-    string clientId = 4;
+    string clientId = 3;
 }
 
 message CreatePaymentResult {

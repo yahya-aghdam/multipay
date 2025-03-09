@@ -4,17 +4,17 @@ import { CoinType } from "@trustwallet/wallet-core/dist/src/wallet-core";
 
 
 export default class Wallet {
-    public strength: number 
+    public strength: number | string
 
-    constructor(strength: number) {
+    constructor(strength: number | string) {
         this.strength = strength
     }
 
-    public async makeWallet(coinType: keyof typeof CoinTypeLocal): Promise<{ mnemonic: string, publicKey: string, address: string }> {
+    public async makeWallet(coinType: keyof typeof CoinTypeLocal): Promise<{ mnemonic: string, address: string }> {
         const core = await initWasm();
         const { HDWallet, HexCoding, CoinType, AnyAddress } = core;
 
-        const wallet = HDWallet.create(this.strength, "");
+        const wallet = HDWallet.create(+this.strength, "");
         const mnemonic = wallet.mnemonic();
         const key = wallet.getKeyForCoin(CoinType[coinType]);
         const publicKey = key.getPublicKeySecp256k1(false);
@@ -22,13 +22,12 @@ export default class Wallet {
 
         return {
             mnemonic,
-            publicKey: HexCoding.encode(publicKey.data()),
             address: address.description()
         }
     }
 }
 
-class CoinTypeLocal {
+export class CoinTypeLocal {
     value: number | undefined;
     static aeternity: CoinType;
     static aion: CoinType;
