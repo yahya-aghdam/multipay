@@ -1,3 +1,4 @@
+/* eslint-disable prefer-const */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
 import { ServerUnaryCall, sendUnaryData } from "@grpc/grpc-js";
@@ -8,12 +9,22 @@ export async function createPayment(
     call: ServerUnaryCall<CreatePaymentRequest, CreatePaymentResult>,
     callback: sendUnaryData<VerifyPaymentResult>
 ) {
-    const tokenRequest = call.request
-    let tokenResult: VerifyPaymentResult 
+    const createPaymentRequest = call.request
+    let createPaymentResult: VerifyPaymentResult
+
+    createPaymentResult = {
+        coin: "etherum",
+        amount: "10",
+        expiration: "10",
+        paymentId: "1234",
+        clientId: "1234",
+        address: "0x1234",
+        isPaid: false,
+        isConfirmed: false
+    }
 
 
-
-    // callback(null, tokenResult)
+    callback(null, createPaymentResult)
 
 }
 // Auth service for gRPC
@@ -21,11 +32,21 @@ export async function verifyPayment(
     call: ServerUnaryCall<VerifyPaymentRequest, VerifyPaymentResult>,
     callback: sendUnaryData<VerifyPaymentResult>
 ) {
-    const tokenRequest = call.request
-    let vaerfyResult: VerifyPaymentResult 
+    const verifyPaymentRequest = call.request
+    let verifyPaymentResult: VerifyPaymentResult
+
+    verifyPaymentResult = {
+        coin: "etherum",
+        amount: "10",
+        expiration: "10",
+        paymentId: "1234",
+        clientId: "1234",
+        address: "0x1234",
+        isPaid: false,
+        isConfirmed: false
+    }
 
 
-
-    // callback(null, vaerfyResult)
+    callback(null, verifyPaymentResult)
 
 }

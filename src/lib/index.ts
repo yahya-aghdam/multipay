@@ -37,17 +37,11 @@ export function expireTimeMaker(days: number): Date {
 // Make sure that all necessary vars are in .env file
 export function validateEnv() {
     const requiredVars = [
-        'JWT_SECRET',
-        "COOKIE_DOMAIN",
-        "MAIN_URL",
-        "API_PATH",
-        "HTTP_PORT",
         "PROTO_URL",
         "PROTO_PORT",
-        "GOOGLE_CLIENT_ID",
-        "GOOGLE_CLIENT_SECRET",
-        "SUCCESS_AUTH_REDIRECT_PATH"
-
+        "NETWORK_CONFIRMATION",
+        "DB_URL",
+        "DB_NAME"
     ];
     const missingVars = requiredVars.filter((envVar) => !process.env[envVar]);
 

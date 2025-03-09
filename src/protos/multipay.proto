@@ -7,15 +7,15 @@ message CreatePaymentRequest {
     string coin = 1;
     string amount = 2;
     int32 expiration = 3;
-    string client_id = 4;
+    string clientId = 4;
 }
 
 message CreatePaymentResult {
     string coin = 1;
     string amount = 2;
     string expiration = 3;
-    string payment_id = 4;
-    string client_id = 5;
+    string paymentId = 4;
+    string clientId = 5;
     string address = 6;
 }
 
@@ -25,18 +25,18 @@ service CreatePayment {
 
 // Verify payment
 message VerifyPaymentRequest {
-    string payment_id = 1;
+    string paymentId = 1;
 }
 
 message VerifyPaymentResult {
     string coin = 1;
     string amount = 2;
     string expiration = 3;
-    string payment_id = 4;
-    string client_id = 5;
+    string paymentId = 4;
+    string clientId = 5;
     string address = 6;
-    bool is_paid = 7;
-    bool is_confirmed = 8;
+    bool isPaid = 7;
+    bool isConfirmed = 8;
 }
 
 service VerifyPayment {

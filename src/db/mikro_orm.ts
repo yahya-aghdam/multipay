@@ -6,7 +6,7 @@ import { DB_NAME, DB_URL } from '../config/dotenv';
 
 
 
-export class MikroOrm {
+export class DB {
    
     private config: Options = {
         dbName: DB_NAME || dbDefualtName, 
@@ -19,11 +19,9 @@ export class MikroOrm {
     private orm: MikroORM | undefined;
     private entityManager!: EntityManager<IDatabaseDriver<Connection>>;
 
-    constructor() {
-        this.initialize();
-    }
 
-    private async initialize() {
+
+    public async init() {
         this.orm = await MikroORM.init(this.config);
         this.entityManager = this.orm.em.fork();
     }
