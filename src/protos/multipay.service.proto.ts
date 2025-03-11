@@ -9,6 +9,7 @@ import { expirationTimeStr, nowUnixStr } from "../lib";
 import { randomUUID } from "crypto";
 import Wallet, { CoinTypeLocal } from "../wallet";
 import { WALLET_STRENGTH } from "../config/dotenv";
+import { time } from "console";
 
 const db = new DB();
 
@@ -35,8 +36,7 @@ export async function createPayment(
 
             const oldestPayment = payments[0]
 
-            const updatePayment: Payment = {
-                _id: oldestPayment._id,
+            const newPayment = {
                 coin: createPaymentRequest.coin,
                 amount: createPaymentRequest.amount,
                 expiration: expirationTimeStr(),
@@ -44,27 +44,18 @@ export async function createPayment(
                 clientId: createPaymentRequest.clientId,
                 address: oldestPayment.address,
                 isPaid: false,
-                isConfirmed: false
+                isConfirmed: false,
+                time: new Date().toISOString()
             }
 
-            await db.updateOne(oldestPayment,updatePayment).then(() => {
-                createPaymentResult = {
-                    coin: createPaymentRequest.coin,
-                    amount: createPaymentRequest.amount,
-                    expiration: expirationTimeStr(),
-                    paymentId: randomUUID(),
-                    clientId: createPaymentRequest.clientId,
-                    address: oldestPayment.address,
-                    isPaid: false,
-                    isConfirmed: false
-                }
+            await db.createOne(Payment, newPayment).then(() => {
+                createPaymentResult = newPayment
             }).catch((err) => {
                 console.log(err)
                 callback({ code: status.INTERNAL, message: err.message }, null)
             })
 
         } else {
-            console.log("here hit")
             const wallet = new Wallet(WALLET_STRENGTH);
             const { mnemonic, address } = await wallet.makeWallet(createPaymentRequest.coin as keyof typeof CoinTypeLocal);
 
@@ -83,7 +74,8 @@ export async function createPayment(
                     clientId: createPaymentRequest.clientId,
                     address: address,
                     isPaid: false,
-                    isConfirmed: false
+                    isConfirmed: false,
+                    time: new Date().toISOString()
                 }
 
                 await db.createOne(Payment, newPayment).then(() => {

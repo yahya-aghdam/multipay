@@ -16,6 +16,7 @@ message CreatePaymentResult {
     string paymentId = 4;
     string clientId = 5;
     string address = 6;
+    string time = 7;
 }
 
 service CreatePayment {

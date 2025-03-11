@@ -11,7 +11,7 @@ export class DB {
     private config: Options = {
         dbName: DB_NAME || dbDefualtName,
         clientUrl: DB_URL,
-        debug: true,
+        debug: false,
         driver: getDriver(DB_URL),
         allowGlobalContext: true,
         entities: [Payment, Wallets]

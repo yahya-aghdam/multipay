@@ -60,3 +60,7 @@ export function expirationTimeStr(): string {
     const date = Date.now() + (+PAYMENT_EXPIRATION_TIME_MIN * 60 * 1000)
     return date.toString()
 }
+
+export function unixToIsoStr(unixTimestamp: string): string{
+    return new Date(unixTimestamp).toISOString()
+}

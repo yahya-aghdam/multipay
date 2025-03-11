@@ -22,7 +22,8 @@
     "@mikro-orm/postgresql": "^6.4.8",
     "@trustwallet/wallet-core": "^4.2.14",
     "dotenv": "^16.4.7",
-    "linksmith": "^1.3.1"
+    "linksmith": "^1.3.1",
+    "moralis": "^2.27.2"
   },
   "devDependencies": {
     "@eslint/js": "^9.22.0",

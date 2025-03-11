@@ -8,3 +8,4 @@ export const DB_URL = process.env.DB_URL as string;
 export const DB_NAME = process.env.DB_NAME as string;
 export const PAYMENT_EXPIRATION_TIME_MIN = process.env.PAYMENT_EXPIRATION_TIME_MIN as string;
 export const WALLET_STRENGTH = process.env.WALLET_STRENGTH as string;
+export const MORALIS_API_KEY = process.env.MORALIS_API_KEY as string;

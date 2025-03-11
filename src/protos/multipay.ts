@@ -35,6 +35,7 @@ export interface CreatePaymentResult {
   paymentId: string;
   clientId: string;
   address: string;
+  time: string;
 }
 
 /** Verify payment */
@@ -146,7 +147,7 @@ export const CreatePaymentRequest: MessageFns<CreatePaymentRequest> = {
 };
 
 function createBaseCreatePaymentResult(): CreatePaymentResult {
-  return { coin: "", amount: "", expiration: "", paymentId: "", clientId: "", address: "" };
+  return { coin: "", amount: "", expiration: "", paymentId: "", clientId: "", address: "", time: "" };
 }
 
 export const CreatePaymentResult: MessageFns<CreatePaymentResult> = {
@@ -168,6 +169,9 @@ export const CreatePaymentResult: MessageFns<CreatePaymentResult> = {
     }
     if (message.address !== "") {
       writer.uint32(50).string(message.address);
+    }
+    if (message.time !== "") {
+      writer.uint32(58).string(message.time);
     }
     return writer;
   },
@@ -227,6 +231,14 @@ export const CreatePaymentResult: MessageFns<CreatePaymentResult> = {
           message.address = reader.string();
           continue;
         }
+        case 7: {
+          if (tag !== 58) {
+            break;
+          }
+
+          message.time = reader.string();
+          continue;
+        }
       }
       if ((tag & 7) === 4 || tag === 0) {
         break;
@@ -244,6 +256,7 @@ export const CreatePaymentResult: MessageFns<CreatePaymentResult> = {
       paymentId: isSet(object.paymentId) ? globalThis.String(object.paymentId) : "",
       clientId: isSet(object.clientId) ? globalThis.String(object.clientId) : "",
       address: isSet(object.address) ? globalThis.String(object.address) : "",
+      time: isSet(object.time) ? globalThis.String(object.time) : "",
     };
   },
 
@@ -267,6 +280,9 @@ export const CreatePaymentResult: MessageFns<CreatePaymentResult> = {
     if (message.address !== "") {
       obj.address = message.address;
     }
+    if (message.time !== "") {
+      obj.time = message.time;
+    }
     return obj;
   },
 
@@ -281,6 +297,7 @@ export const CreatePaymentResult: MessageFns<CreatePaymentResult> = {
     message.paymentId = object.paymentId ?? "";
     message.clientId = object.clientId ?? "";
     message.address = object.address ?? "";
+    message.time = object.time ?? "";
     return message;
   },
 };

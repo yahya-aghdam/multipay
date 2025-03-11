@@ -3,52 +3,55 @@ import { randomUUID } from 'crypto';
 
 
 
-@Entity() 
+@Entity()
 export class Payment {
 
-    @PrimaryKey() 
+    @PrimaryKey()
     _id: string = randomUUID();
 
-    @Index() 
-    @Property() 
-    paymentId!: string; 
+    @Index()
+    @Property()
+    paymentId!: string;
 
-    @Property() 
-    coin!: string; 
+    @Property()
+    coin!: string;
 
-    @Property() 
-    amount!: string; 
+    @Property()
+    amount!: string;
 
-    @Property() 
-    expiration!: string; 
+    @Property()
+    expiration!: string;
 
-    @Property() 
-    clientId!: string; 
+    @Property()
+    clientId!: string;
 
-    @Property() 
-    address!: string; 
+    @Property()
+    address!: string;
 
-    @Property() 
+    @Property()
     isPaid: boolean = false
 
-    @Property() 
+    @Property()
     isConfirmed: boolean = false
+
+    @Property()
+    time!: string;
 }
 
 
-@Entity() 
+@Entity()
 export class Wallets {
 
-    @PrimaryKey() 
-    _id: string = randomUUID(); 
+    @PrimaryKey()
+    _id: string = randomUUID();
 
-    @Index() 
-    @Property() 
-    address!: string; 
-
-    @Property() 
-    mnemonic!: string; 
+    @Index()
+    @Property()
+    address!: string;
 
     @Property()
-    coin!: string; 
+    mnemonic!: string;
+
+    @Property()
+    coin!: string;
 }
