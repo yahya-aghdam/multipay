@@ -40,7 +40,6 @@ export function validateEnv() {
     const requiredVars = [
         "PROTO_URL",
         "PROTO_PORT",
-        "NETWORK_CONFIRMATION",
         "DB_URL",
         "DB_NAME"
     ];

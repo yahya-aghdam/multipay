@@ -32,6 +32,9 @@ export class Payment {
     isPaid: boolean = false
 
     @Property()
+    blockNumber!: number;
+
+    @Property()
     isConfirmed: boolean = false
 
     @Property()

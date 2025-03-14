@@ -7,23 +7,25 @@ import { Payment } from "../db/entity";
 
 export default class Balance {
 
-    private coinHandlers: Record<string, (payment: Payment) => Promise<string>> = {
+    private coinHandlers: Record<string, (payment: Payment) => Promise<{ amount: string, blockNumber: number, isConfirmed: boolean }>> = {
         "tron": this.getTronBalance.bind(this),
         // ethereum: handleEthereum,
         // usdt_trc20: handleUsdtTrc20
     };
 
-    private async processCoin(payment:Payment): Promise<string> {
+    private async processCoin(payment: Payment): Promise<{ amount: string, blockNumber: number, isConfirmed: boolean }> {
         const handler = this.coinHandlers[payment.coin]; // Get function from map
         if (handler) {
             return await handler(payment); // Execute function
         } else {
-            return "0";
+            return { "amount": "0", "blockNumber": 0, "isConfirmed": false };
         }
     }
 
 
-    private async getTronBalance(payment: Payment): Promise<string> {
+    // Tron
+    private async getTronBalance(payment: Payment): Promise<{ amount: string, blockNumber: number, isConfirmed: boolean }> {
+
 
         function sunAmountToNormal(data: number): string {
             const amount = data / 1_000_000;
@@ -47,40 +49,52 @@ export default class Balance {
 
                 return +timestamp > +payment.time && +timestamp < +payment.expiration && amount !== 1 && toAddressHex == recieverAddress; // Filter conditions
             });
-                
+
+        }
+
+        async function getLastBlockNumber(): Promise<number> {
+            const response = await fetch(coinData.tron.block)
+            const data = await response.json()
+            return data.block_header.raw_data.number
         }
 
 
-        const finalUrl = linksmith(api_urls.tron, {
+        const finalUrl = linksmith(coinData.tron.accounts, {
             paths: [payment.address, "transactions"],
             queryParams: { "limit": "5", "order_by": "block_timestamp,desc" }
-        }) 
+        })
 
         const last5Transactions = await fetch(finalUrl)
 
         if (last5Transactions.status === 200) {
             const transactions = (await last5Transactions.json()).data
             const filteredTransactions = filterTronTransactions(transactions, payment);
-            console.log("🚀 ~ Balance ~ getTronBalance ~ filteredTransactions:", filteredTransactions)
+
             if (filteredTransactions.length > 0) {
                 const amount = filteredTransactions[0].raw_data.contract[0].parameter.value.amount;
-                return sunAmountToNormal(amount);
+                const blockNumber = filteredTransactions[0].blockNumber;
+                const lastBlockNumber = await getLastBlockNumber();
+                let isConfirmed = false;
+                if (blockNumber + coinData.tron.networkConfirmationNumber <= lastBlockNumber) {
+                    isConfirmed = true;
+                }
+                return { amount: sunAmountToNormal(amount), blockNumber, isConfirmed };
             } else {
-                return "0";
+                return { "amount": "0", "blockNumber": 0, "isConfirmed": false };
             }
         } else {
             console.log("Error in getting balance:", last5Transactions)
-            return "0";
+            return { "amount": "0", "blockNumber": 0, "isConfirmed": false };
         }
     }
 
-    public async verify(payment:Payment): Promise<boolean> {
-        const amount = await this.processCoin(payment);
+    public async verify(payment: Payment): Promise<{ verify: boolean, blockNumber: number, isConfirmed: boolean }> {
+        const { amount, blockNumber, isConfirmed } = await this.processCoin(payment);
 
         if (amount >= payment.amount) {
-            return true;
+            return { verify: true, blockNumber, isConfirmed };
         } else {
-            return false;
+            return { verify: false, blockNumber, isConfirmed };
         }
     }
 }
@@ -88,8 +102,12 @@ export default class Balance {
 
 
 // * vars
-const api_urls = {
-    tron: "https://api.trongrid.io/v1/accounts"
+const coinData = {
+    tron: {
+        accounts: "https://api.trongrid.io/v1/accounts",
+        block: "https://api.trongrid.io/walletsolidity/getnowblock",
+        networkConfirmationNumber: 20
+    }
 }
 
 const coins = [
