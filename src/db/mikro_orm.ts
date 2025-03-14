@@ -26,8 +26,8 @@ export class DB {
         this.entityManager = this.orm.em.fork();
     }
 
-    public async findOne(entity: EntityName<object>, filter: object, options: object | undefined) {
-        return await this.entityManager.findOne(entity, filter, options);
+    public async findOne(entity: EntityName<object>, filter: object) {
+        return await this.entityManager.findOne(entity, filter);
     }
 
     public async findMany(entity: EntityName<object>, filter: object, options: object | undefined) {

@@ -1,17 +1,16 @@
-/* eslint-disable prefer-const */
-/* eslint-disable @typescript-eslint/no-unused-vars */
-
 import { ServerUnaryCall, sendUnaryData, status } from "@grpc/grpc-js";
 import { CreatePaymentRequest, CreatePaymentResult, VerifyPaymentRequest, VerifyPaymentResult } from "./multipay";
 import { DB } from "../db/mikro_orm";
-import { Payment, Wallets } from "../db/entity";
+import { Payment, Wallets } from '../db/entity';
 import { expirationTimeStr, nowUnixStr } from "../lib";
 import { randomUUID } from "crypto";
-import Wallet, { CoinTypeLocal } from "../wallet";
+import Wallet, { CoinTypeLocal } from "../lib/wallet";
 import { WALLET_STRENGTH } from "../config/dotenv";
-import { time } from "console";
+import Balance from "../lib/balance";
+
 
 const db = new DB();
+const balance = new Balance();
 
 // Auth service for gRPC
 export async function createPayment(
@@ -45,7 +44,7 @@ export async function createPayment(
                 address: oldestPayment.address,
                 isPaid: false,
                 isConfirmed: false,
-                time: new Date().toISOString()
+                time: nowUnixStr()
             }
 
             await db.createOne(Payment, newPayment).then(() => {
@@ -111,18 +110,46 @@ export async function verifyPayment(
     const verifyPaymentRequest = call.request
     let verifyPaymentResult: VerifyPaymentResult
 
-    verifyPaymentResult = {
-        coin: "etherum",
-        amount: "10",
-        expiration: "10",
-        paymentId: "1234",
-        clientId: "1234",
-        address: "0x1234",
-        isPaid: false,
-        isConfirmed: false
-    }
+    await db.init().then(async () => {
+
+        const payment = await db.findOne(Payment, { paymentId: verifyPaymentRequest.paymentId }) as Payment
+
+        if (payment) {
+            const verify = await balance.verify(payment)
+
+            verifyPaymentResult = {
+                coin: payment.coin,
+                amount: payment.amount,
+                expiration: payment.expiration,
+                paymentId: payment.paymentId,
+                clientId: payment.clientId,
+                address: payment.address,
+                isPaid: payment.isPaid,
+                isConfirmed: payment.isConfirmed
+            }
+
+            if (verify) {
+                const newPayment = payment
+                newPayment.isPaid = true
+
+                await db.updateOne(payment, newPayment).then(() => {
+                    verifyPaymentResult.isPaid = true;
+                }).catch((err) => {
+                    console.log(err)
+                    callback({ code: status.INTERNAL, message: err.message }, null)
+                })
+            }
 
 
-    callback(null, verifyPaymentResult)
+
+            callback(null, verifyPaymentResult)
+
+        } else {
+            callback({ code: status.NOT_FOUND }, null)
+        }
+
+    }).catch((err) => {
+        throw err
+    })
 
 }
