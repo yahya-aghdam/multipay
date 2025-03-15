@@ -41,7 +41,9 @@ export function validateEnv() {
         "PROTO_URL",
         "PROTO_PORT",
         "DB_URL",
-        "DB_NAME"
+        "DB_NAME",
+        "PAYMENT_EXPIRATION_TIME_MIN",
+        "WALLET_STRENGTH",
     ];
     const missingVars = requiredVars.filter((envVar) => !process.env[envVar]);
 
