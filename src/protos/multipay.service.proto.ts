@@ -117,7 +117,6 @@ export async function verifyPayment(
         const payment = await db.findOne(Payment, { paymentId: verifyPaymentRequest.paymentId }) as Payment
 
         if (payment) {
-            const { verify, blockNumber, isConfirmed } = await balance.verify(payment)
 
             verifyPaymentResult = {
                 coin: payment.coin,
@@ -127,15 +126,29 @@ export async function verifyPayment(
                 clientId: payment.clientId,
                 address: payment.address,
                 isPaid: payment.isPaid,
-                isConfirmed: isConfirmed,
+                isConfirmed: payment.isConfirmed,
             }
 
-            if (verify) {
-                const newPayment = payment
-                newPayment.isPaid = true
-                newPayment.blockNumber = blockNumber
+            // use NAND gate
+            if (!(payment.isPaid && payment.isConfirmed)) {
 
-                if (payment.isPaid) {
+                const { verify, blockNumber, isConfirmed } = await balance.verify(payment)
+
+                if (!payment.isPaid && verify) {
+                    const newPayment = payment
+                    newPayment.isPaid = true
+                    newPayment.blockNumber = blockNumber
+
+                    await db.updateOne(payment, newPayment).then(() => {
+                        verifyPaymentResult.isPaid = true;
+                    }).catch((err) => {
+                        console.log(err)
+                        callback({ code: status.INTERNAL, message: err.message }, null)
+                    })
+                }
+
+                if (!payment.isConfirmed && verify) {
+                    const newPayment = payment
                     if (isConfirmed) {
                         newPayment.isConfirmed = isConfirmed
                         await db.updateOne(payment, newPayment).then(() => {
@@ -145,17 +158,8 @@ export async function verifyPayment(
                             callback({ code: status.INTERNAL, message: err.message }, null)
                         })
                     }
-                } else {
-                    await db.updateOne(payment, newPayment).then(() => {
-                        verifyPaymentResult.isPaid = true;
-                    }).catch((err) => {
-                        console.log(err)
-                        callback({ code: status.INTERNAL, message: err.message }, null)
-                    })
                 }
             }
-
-
 
             callback(null, verifyPaymentResult)
 
