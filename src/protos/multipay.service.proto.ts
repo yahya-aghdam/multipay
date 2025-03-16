@@ -9,19 +9,24 @@ import { WALLET_STRENGTH } from "../config/dotenv";
 import Balance from "../lib/balance";
 
 
+// Creating an instance of the DB class
 const db = new DB();
+
+// Creating an instance of the Balance class
 const balance = new Balance();
 
-
+// Function to create a payment
 export async function createPayment(
     call: ServerUnaryCall<CreatePaymentRequest, CreatePaymentResult>,
     callback: sendUnaryData<VerifyPaymentResult>
 ) {
-    const createPaymentRequest = call.request
-    let createPaymentResult: VerifyPaymentResult
+    // Extracting the request from the call
+    const createPaymentRequest = call.request;
+    let createPaymentResult: VerifyPaymentResult;
 
+    // Initializing the database
     await db.init().then(async () => {
-
+        // Finding expired payments for the specified coin
         const payments = await db.findMany(
             Payment,
             {
@@ -29,11 +34,11 @@ export async function createPayment(
                 coin: createPaymentRequest.coin
             },
             { orderBy: { expiration: "asc" } }
-        ) as Payment[]
+        ) as Payment[];
 
+        // If there are expired payments, reuse the oldest one
         if (payments.length != 0) {
-
-            const oldestPayment = payments[0]
+            const oldestPayment = payments[0];
 
             const newPayment = {
                 coin: createPaymentRequest.coin,
@@ -46,16 +51,18 @@ export async function createPayment(
                 isConfirmed: false,
                 time: nowUnixStr(),
                 blockNumber: 0
-            }
+            };
 
+            // Creating the new payment in the database
             await db.createOne(Payment, newPayment).then(() => {
-                createPaymentResult = newPayment
+                createPaymentResult = newPayment;
             }).catch((err) => {
-                console.log(err)
-                callback({ code: status.INTERNAL, message: err.message }, null)
-            })
+                console.log(err);
+                callback({ code: status.INTERNAL, message: err.message }, null);
+            });
 
         } else {
+            // If there are no expired payments, create a new wallet and payment
             const wallet = new Wallet(WALLET_STRENGTH);
             const { mnemonic, address } = await wallet.makeWallet(createPaymentRequest.coin as keyof typeof CoinTypeLocal);
 
@@ -64,8 +71,8 @@ export async function createPayment(
             newWallet.coin = createPaymentRequest.coin;
             newWallet.mnemonic = mnemonic;
 
+            // Creating the new wallet in the database
             await db.createOne(Wallets, newWallet).then(async () => {
-
                 const newPayment = {
                     coin: createPaymentRequest.coin,
                     amount: createPaymentRequest.amount,
@@ -77,48 +84,45 @@ export async function createPayment(
                     isConfirmed: false,
                     blockNumber: 0,
                     time: nowUnixStr()
-                }
+                };
 
+                // Creating the new payment in the database
                 await db.createOne(Payment, newPayment).then(() => {
-                    createPaymentResult = newPayment
+                    createPaymentResult = newPayment;
                 }).catch((err) => {
-                    console.log(err)
-                    callback({ code: status.INTERNAL, message: err.message }, null)
-                })
+                    console.log(err);
+                    callback({ code: status.INTERNAL, message: err.message }, null);
+                });
 
             }).catch((err) => {
-                console.log(err)
-                callback({ code: status.INTERNAL, message: err.message }, null)
-            })
-
+                console.log(err);
+                callback({ code: status.INTERNAL, message: err.message }, null);
+            });
         }
 
-
-
-        callback(null, createPaymentResult)
+        // Sending the result back to the client
+        callback(null, createPaymentResult);
 
     }).catch((err) => {
-        throw new err
-    })
-
-
-
+        throw err;
+    });
 }
 
-
+// Function to verify a payment
 export async function verifyPayment(
     call: ServerUnaryCall<VerifyPaymentRequest, VerifyPaymentResult>,
     callback: sendUnaryData<VerifyPaymentResult>
 ) {
-    const verifyPaymentRequest = call.request
-    let verifyPaymentResult: VerifyPaymentResult
+    // Extracting the request from the call
+    const verifyPaymentRequest = call.request;
+    let verifyPaymentResult: VerifyPaymentResult;
 
+    // Initializing the database
     await db.init().then(async () => {
-
-        const payment = await db.findOne(Payment, { paymentId: verifyPaymentRequest.paymentId }) as Payment
+        // Finding the payment by paymentId
+        const payment = await db.findOne(Payment, { paymentId: verifyPaymentRequest.paymentId }) as Payment;
 
         if (payment) {
-
             verifyPaymentResult = {
                 coin: payment.coin,
                 amount: payment.amount,
@@ -128,48 +132,50 @@ export async function verifyPayment(
                 address: payment.address,
                 isPaid: payment.isPaid,
                 isConfirmed: payment.isConfirmed,
-            }
+            };
 
-            // use NAND gate
+            // If the payment is not paid or confirmed, verify it
             if (!(payment.isPaid && payment.isConfirmed)) {
-
-                const { verify, blockNumber, isConfirmed } = await balance.verify(payment)
+                const { verify, blockNumber, isConfirmed } = await balance.verify(payment);
 
                 if (!payment.isPaid && verify) {
-                    const newPayment = payment
-                    newPayment.isPaid = true
-                    newPayment.blockNumber = blockNumber
+                    const newPayment = payment;
+                    newPayment.isPaid = true;
+                    newPayment.blockNumber = blockNumber;
 
+                    // Updating the payment in the database
                     await db.updateOne(payment, newPayment).then(() => {
                         verifyPaymentResult.isPaid = true;
                     }).catch((err) => {
-                        console.log(err)
-                        callback({ code: status.INTERNAL, message: err.message }, null)
-                    })
+                        console.log(err);
+                        callback({ code: status.INTERNAL, message: err.message }, null);
+                    });
                 }
 
                 if (!payment.isConfirmed && verify) {
-                    const newPayment = payment
+                    const newPayment = payment;
                     if (isConfirmed) {
-                        newPayment.isConfirmed = isConfirmed
+                        newPayment.isConfirmed = isConfirmed;
+                        // Updating the payment in the database
                         await db.updateOne(payment, newPayment).then(() => {
                             verifyPaymentResult.isConfirmed = isConfirmed;
                         }).catch((err) => {
-                            console.log(err)
-                            callback({ code: status.INTERNAL, message: err.message }, null)
-                        })
+                            console.log(err);
+                            callback({ code: status.INTERNAL, message: err.message }, null);
+                        });
                     }
                 }
             }
 
-            callback(null, verifyPaymentResult)
+            // Sending the result back to the client
+            callback(null, verifyPaymentResult);
 
         } else {
-            callback({ code: status.NOT_FOUND }, null)
+            // If the payment is not found, send a NOT_FOUND status
+            callback({ code: status.NOT_FOUND }, null);
         }
 
     }).catch((err) => {
-        throw err
-    })
-
+        throw err;
+    });
 }

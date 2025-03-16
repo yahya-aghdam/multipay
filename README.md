@@ -63,6 +63,7 @@ DB_URL=your_db_url
 DB_NAME=your_db_name
 PAYMENT_EXPIRATION_TIME_MIN=your_payment_expiration_time # in minutes
 WALLET_STRENGTH=your_wallet_strength # in bits
+ETHER_SCAN_API_KEY=your_ether_scan_api_key # if you support Ethereum sign in the https://etherscan.io and paste your api key in here
 ```
 
 ## Usage

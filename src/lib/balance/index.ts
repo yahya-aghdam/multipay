@@ -7,8 +7,7 @@ export default class Balance {
 
     private coinHandlers: Record<string, (payment: Payment) => Promise<{ amount: string, blockNumber: number, isConfirmed: boolean }>> = {
         "tron": this.getTronBalance.bind(this),
-        // ethereum: handleEthereum,
-        // usdt_trc20: handleUsdtTrc20
+        "ethereum": this.getEthereumBalance.bind(this),
     }
 
     private async processCoin(payment: Payment): Promise<{ amount: string, blockNumber: number, isConfirmed: boolean }> {

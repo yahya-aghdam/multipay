@@ -11,10 +11,13 @@ validateEnv();
 // gRPC Server Initialization
 const server = new Server();
 
-// Create a new gRPC server instance
+// Adding the CreatePaymentService to the gRPC server with the createPayment function as the handler
 server.addService(CreatePaymentService, { createPayment });
+
+// Adding the VerifyPaymentService to the gRPC server with the verifyPayment function as the handler
 server.addService(VerifyPaymentService, { verifyPayment });
 
+// Binding the gRPC server to the specified address and port with insecure credentials (no SSL/TLS)
 server.bindAsync(
     proto_url, // The address and port for the gRPC server to listen on
     ServerCredentials.createInsecure(), // Use insecure credentials (no SSL/TLS) for simplicity in development
