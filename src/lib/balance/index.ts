@@ -1,6 +1,6 @@
 import { Payment } from "../../db/entity"
 import { coinData, noAction } from "./vars"
-import { filterTronTransactions, getLast5TransactionsTron, getLastBlockNumberEthereum, getLastBlockNumberTron, getLastTransactionsEthereum, sunAmountToNormal, weiToEth } from "./utils"
+import { filterEthereumTransactions, filterTronTransactions, getLast5TransactionsTron, getLastBlockNumberEthereum, getLastBlockNumberTron, getLastTransactionsEthereum, sunAmountToNormal, weiToEth } from "./utils"
 
 
 export default class Balance {
@@ -67,10 +67,11 @@ export default class Balance {
 
             if (lastTransactions.status == 200) {
                 const transactions = (await lastTransactions.json()).result
+                const filteredTransactions = filterEthereumTransactions(transactions, payment)
 
-                if (transactions.length > 0) {
-                    const amount = transactions[0].value
-                    const blockNumber = transactions[0].blockNumber
+                if (filteredTransactions.length > 0) {
+                    const amount = filteredTransactions[0].value
+                    const blockNumber = filteredTransactions[0].blockNumber
 
                     return { amount: weiToEth(amount), blockNumber, isConfirmed: false }
                 } else {

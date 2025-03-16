@@ -97,3 +97,17 @@ export async function getLastBlockNumberEthereum(): Promise<number> {
         return 0;
     }
 }
+
+export function filterEthereumTransactions(transactions: any[], payment: Payment): any[] {
+    return transactions.filter(tx => {
+        const timestamp = tx.timeStamp;
+        const amount = tx.value;
+        let recieverAddress: string | undefined;
+        if (tx.to != undefined) {
+            recieverAddress = tx.to;
+        }
+        const toAddress = tx.to
+
+        return +timestamp > +payment.time && +timestamp < +payment.expiration && amount !== 1 && toAddress == recieverAddress;
+    });
+}
