@@ -14,7 +14,7 @@ export const coinData = {
         // API endpoint for Ethereum accounts
         accounts: "https://api.etherscan.io/v2/api",
         // API endpoint for getting the current block on the Ethereum blockchain
-        block: "https://api.etherscan.io/v2/api",
+        block: "https://api.etherscan.io/api",
         // Number of network confirmations required for Ethereum transactions
         networkConfirmationNumber: 1
     }
@@ -22,7 +22,7 @@ export const coinData = {
 
 // Exporting a default action object with default values for amount, block number, and confirmation status
 export const noAction = {
-    "amount": "0",
+    "verify": false,
     "blockNumber": 0,
     "isConfirmed": false
 }

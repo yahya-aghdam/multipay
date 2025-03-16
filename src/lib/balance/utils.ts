@@ -20,10 +20,18 @@ export function normalAmountToSun(data: number): string {
     return amount.toFixed(0);
 }
 
+function timeFixtoMiliSec(time: string): number {
+    if (time.length == 10) {
+        return +time * 1000;
+    } else {
+        return +time;
+    }
+}
+
 // Function to filter Tron transactions based on payment details
 export function filterTronTransactions(transactions: any[], payment: Payment): any[] {
     return transactions.filter(tx => {
-        const timestamp = tx.block_timestamp;
+        const timestamp = timeFixtoMiliSec(tx.block_timestamp);
         const amount = tx.raw_data.contract[0].parameter.value.amount;
         let recieverAddress: string | undefined;
         if (tx.raw_data.contract[0].parameter.value.to_address != undefined) {
@@ -31,7 +39,7 @@ export function filterTronTransactions(transactions: any[], payment: Payment): a
         }
         const toAddressHex = TronWeb.address.toHex(payment.address);
 
-        return +timestamp > +payment.time && +timestamp < +payment.expiration && amount !== 1 && toAddressHex == recieverAddress;
+        return timestamp > +payment.time && timestamp < +payment.expiration && amount !== 1 && toAddressHex == recieverAddress;
     });
 }
 
@@ -73,13 +81,13 @@ export async function getLastTransactionsEthereum(payment: Payment): Promise<Res
 }
 
 // Function to convert Wei (Ethereum's smallest unit) to Ether
-export function weiToEth(wei: string): string {
-    return (Number(wei) / 1e18).toFixed(0);
+export function weiAmountToNormal(wei: string): string {
+    return (+wei / 1e18).toString();
 }
 
 // Function to get the last block number on the Ethereum blockchain
 export async function getLastBlockNumberEthereum(): Promise<number> {
-    const finalUrl = linksmith(coinData.ethereum.accounts, {
+    const finalUrl = linksmith(coinData.ethereum.block, {
         queryParams: {
             apikey: ETHER_SCAN_API_KEY,
             module: "proxy",
@@ -92,6 +100,7 @@ export async function getLastBlockNumberEthereum(): Promise<number> {
 
     if (data.result) {
         const blockNumber = parseInt(data.result, 16);
+        console.log("🚀 ~ getLastBlockNumberEthereum ~ blockNumber:", blockNumber)
         return blockNumber;
     } else {
         return 0;
@@ -100,14 +109,13 @@ export async function getLastBlockNumberEthereum(): Promise<number> {
 
 export function filterEthereumTransactions(transactions: any[], payment: Payment): any[] {
     return transactions.filter(tx => {
-        const timestamp = tx.timeStamp;
-        const amount = tx.value;
+        const timestamp = timeFixtoMiliSec(tx.timeStamp);
         let recieverAddress: string | undefined;
         if (tx.to != undefined) {
             recieverAddress = tx.to;
         }
-        const toAddress = tx.to
 
-        return +timestamp > +payment.time && +timestamp < +payment.expiration && amount !== 1 && toAddress == recieverAddress;
+        return timestamp > +payment.time && timestamp < +payment.expiration && payment.address == recieverAddress;
     });
 }
+
