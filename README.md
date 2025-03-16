@@ -6,6 +6,10 @@ Multipay is a multi cryptocurrency payment gateway as a microservice that facili
 
 - ✅ Tron
 - ✅ Ethereum
+- 🔜 Doge
+- 🔜 USDT TRC-20
+- 🔜 BNB
+- 🔜 USDT BEP-20
 
 ## Table of Contents
 
