@@ -2,15 +2,24 @@
 
 Multipay is a multi cryptocurrency payment gateway as a microservice that facilitates the creation and management of wallets, balance checking, and payment verification and confirmation for various cryptocurrencies. It leverages [Trust Wallet Core](https://github.com/TrustWallet/wallet-core) for wallet functionalities and uses [gRPC](https://grpc.io/) for communication. Also it uses some nodes for balance checking and payment confirmion.
 
+## Supported Cryptocurrencies
+
+- ✅ Tron
+- ✅ Ethereum
+
 ## Table of Contents
 
 - [multipay](#multipay)
+  - [Supported Cryptocurrencies](#supported-cryptocurrencies)
   - [Table of Contents](#table-of-contents)
   - [Installation](#installation)
   - [`.env` file](#env-file)
   - [Usage](#usage)
     - [Development](#development)
     - [Production](#production)
+  - [Example of gRPC request](#example-of-grpc-request)
+    - [Add payment](#add-payment)
+    - [Verify payment](#verify-payment)
   - [Project Structure](#project-structure)
   - [License](#license)
 
@@ -81,6 +90,55 @@ To start the production server using Docker:
 
 ```sh
 npm run docker:build
+```
+
+## Example of gRPC request
+
+### Add payment
+
+Message body:
+
+| Field      | Type     | Description                      |
+| ---------- | -------- | -------------------------------- |
+| `amount`   | `string` | Amount of payment like "0.00256" |
+| `clientId` | `string` | ID of client                     |
+| `coin`     | `string` | Name of coin like "etherum"      |
+
+Response:
+
+```json
+{
+    "coin": "ethereum",
+    "amount": "0.001",
+    "expiration": "1742146248273",
+    "paymentId": "53d10ad5-3be0-4ef3-ac30-6a88afb4e364",
+    "clientId": "testClientId",
+    "address": "0xFF49d5Ff0Da6cB8825ba644F0262a514Ec7830C0",
+    "time": "1742145048273"
+}
+```
+
+### Verify payment
+
+Message body:
+
+| Field       | Type     | Description   |
+| ----------- | -------- | ------------- |
+| `paymentId` | `string` | ID of payment |
+
+Response:
+
+```json
+{
+    "coin": "ethereum",
+    "amount": "0.001",
+    "expiration": "1742146248273",
+    "paymentId": "53d10ad5-3be0-4ef3-ac30-6a88afb4e364",
+    "clientId": "testClientId",
+    "address": "0xFF49d5Ff0Da6cB8825ba644F0262a514Ec7830C0",
+    "isPaid": true,
+    "isConfirmed": true,
+}
 ```
 
 ## Project Structure

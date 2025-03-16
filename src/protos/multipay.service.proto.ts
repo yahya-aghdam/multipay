@@ -44,7 +44,8 @@ export async function createPayment(
                 address: oldestPayment.address,
                 isPaid: false,
                 isConfirmed: false,
-                time: nowUnixStr()
+                time: nowUnixStr(),
+                blockNumber: 0
             }
 
             await db.createOne(Payment, newPayment).then(() => {
@@ -75,7 +76,7 @@ export async function createPayment(
                     isPaid: false,
                     isConfirmed: false,
                     blockNumber: 0,
-                    time: new Date().toISOString()
+                    time: nowUnixStr()
                 }
 
                 await db.createOne(Payment, newPayment).then(() => {
