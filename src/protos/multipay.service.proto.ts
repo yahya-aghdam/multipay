@@ -2,11 +2,12 @@ import { ServerUnaryCall, sendUnaryData, status } from "@grpc/grpc-js";
 import { CreatePaymentRequest, CreatePaymentResult, VerifyPaymentRequest, VerifyPaymentResult } from "./multipay";
 import { DB } from "../db/mikro_orm";
 import { Payment, Wallets } from '../db/entity';
-import { expirationTimeStr, nowUnixStr } from "../lib";
+import { expirationTimeStr, notSupportedCoinsHandler, nowUnixStr } from "../lib";
 import { randomUUID } from "crypto";
-import Wallet, { CoinTypeLocal } from "../lib/wallet";
+import Wallet from "../lib/wallet";
 import { WALLET_STRENGTH } from "../config/dotenv";
 import Balance from "../lib/balance";
+import { CoinTypeLocal } from "../lib/wallet/utils";
 
 
 // Creating an instance of the DB class
@@ -24,66 +25,39 @@ export async function createPayment(
     const createPaymentRequest = call.request;
     let createPaymentResult: VerifyPaymentResult;
 
-    // Initializing the database
-    await db.init().then(async () => {
-        // Finding expired payments for the specified coin
-        const payments = await db.findMany(
-            Payment,
-            {
-                expiration: { $lt: nowUnixStr() },
-                coin: createPaymentRequest.coin
-            },
-            { orderBy: { expiration: "asc" } }
-        ) as Payment[];
+    const { valid, coin } = notSupportedCoinsHandler(createPaymentRequest.coin)
 
-        // If there are expired payments, reuse the oldest one
-        if (payments.length != 0) {
-            const oldestPayment = payments[0];
+    if (valid) {
+        // Handle not supported coins
+        createPaymentRequest.coin = coin
 
-            const newPayment = {
-                coin: createPaymentRequest.coin,
-                amount: createPaymentRequest.amount,
-                expiration: expirationTimeStr(),
-                paymentId: randomUUID(),
-                clientId: createPaymentRequest.clientId,
-                address: oldestPayment.address,
-                isPaid: false,
-                isConfirmed: false,
-                time: nowUnixStr(),
-                blockNumber: 0
-            };
+        // Initializing the database
+        await db.init().then(async () => {
+            // Finding expired payments for the specified coin
+            const payments = await db.findMany(
+                Payment,
+                {
+                    expiration: { $lt: nowUnixStr() },
+                    coin: createPaymentRequest.coin
+                },
+                { orderBy: { expiration: "asc" } }
+            ) as Payment[];
 
-            // Creating the new payment in the database
-            await db.createOne(Payment, newPayment).then(() => {
-                createPaymentResult = newPayment;
-            }).catch((err) => {
-                console.log(err);
-                callback({ code: status.INTERNAL, message: err.message }, null);
-            });
+            // If there are expired payments, reuse the oldest one
+            if (payments.length != 0) {
+                const oldestPayment = payments[0];
 
-        } else {
-            // If there are no expired payments, create a new wallet and payment
-            const wallet = new Wallet(WALLET_STRENGTH);
-            const { mnemonic, address } = await wallet.makeWallet(createPaymentRequest.coin as keyof typeof CoinTypeLocal);
-
-            const newWallet = new Wallets();
-            newWallet.address = address;
-            newWallet.coin = createPaymentRequest.coin;
-            newWallet.mnemonic = mnemonic;
-
-            // Creating the new wallet in the database
-            await db.createOne(Wallets, newWallet).then(async () => {
                 const newPayment = {
                     coin: createPaymentRequest.coin,
                     amount: createPaymentRequest.amount,
                     expiration: expirationTimeStr(),
                     paymentId: randomUUID(),
                     clientId: createPaymentRequest.clientId,
-                    address: address,
+                    address: oldestPayment.address,
                     isPaid: false,
                     isConfirmed: false,
-                    blockNumber: 0,
-                    time: nowUnixStr()
+                    time: nowUnixStr(),
+                    blockNumber: 0
                 };
 
                 // Creating the new payment in the database
@@ -94,18 +68,54 @@ export async function createPayment(
                     callback({ code: status.INTERNAL, message: err.message }, null);
                 });
 
-            }).catch((err) => {
-                console.log(err);
-                callback({ code: status.INTERNAL, message: err.message }, null);
-            });
-        }
+            } else {
+                // If there are no expired payments, create a new wallet and payment
+                const wallet = new Wallet(WALLET_STRENGTH);
+                const { mnemonic, address } = await wallet.makeWallet(createPaymentRequest.coin as keyof typeof CoinTypeLocal);
 
-        // Sending the result back to the client
-        callback(null, createPaymentResult);
+                const newWallet = new Wallets();
+                newWallet.address = address;
+                newWallet.coin = createPaymentRequest.coin;
+                newWallet.mnemonic = mnemonic;
 
-    }).catch((err) => {
-        throw err;
-    });
+                // Creating the new wallet in the database
+                await db.createOne(Wallets, newWallet).then(async () => {
+                    const newPayment = {
+                        coin: createPaymentRequest.coin,
+                        amount: createPaymentRequest.amount,
+                        expiration: expirationTimeStr(),
+                        paymentId: randomUUID(),
+                        clientId: createPaymentRequest.clientId,
+                        address: address,
+                        isPaid: false,
+                        isConfirmed: false,
+                        blockNumber: 0,
+                        time: nowUnixStr()
+                    };
+
+                    // Creating the new payment in the database
+                    await db.createOne(Payment, newPayment).then(() => {
+                        createPaymentResult = newPayment;
+                    }).catch((err) => {
+                        console.log(err);
+                        callback({ code: status.INTERNAL, message: err.message }, null);
+                    });
+
+                }).catch((err) => {
+                    console.log(err);
+                    callback({ code: status.INTERNAL, message: err.message }, null);
+                });
+            }
+
+            // Sending the result back to the client
+            callback(null, createPaymentResult);
+
+        }).catch((err) => {
+            throw err;
+        });
+    } else {
+        callback({ code: status.INVALID_ARGUMENT, message: `${coin} is not supported` }, null);
+    }
 }
 
 // Function to verify a payment

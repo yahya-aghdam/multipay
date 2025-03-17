@@ -3,11 +3,10 @@ import { TronWeb } from "tronweb";
 import { Payment } from "../../db/entity";
 import { coinData } from "./vars";
 import linksmith from "linksmith";
-import { ETHER_SCAN_API_KEY } from "../../config/dotenv";
+import { BSC_SACN_API_KEY, ETHER_SCAN_API_KEY } from "../../config/dotenv";
 
 
-// Tron
-
+//* Tron
 // Function to convert Sun (Tron's smallest unit) to normal Tron amount
 export function sunAmountToNormal(data: number): string {
     const amount = data / 1_000_000;
@@ -59,8 +58,7 @@ export async function getLastBlockNumberTron(): Promise<number> {
     return data.block_header.raw_data.number;
 }
 
-// Ethereum
-
+//* Ethereum
 // Function to get the last transactions for an Ethereum payment address
 export async function getLastTransactionsEthereum(payment: Payment): Promise<Response> {
     const finalUrl = linksmith(coinData.ethereum.accounts, {
@@ -100,7 +98,6 @@ export async function getLastBlockNumberEthereum(): Promise<number> {
 
     if (data.result) {
         const blockNumber = parseInt(data.result, 16);
-        console.log("🚀 ~ getLastBlockNumberEthereum ~ blockNumber:", blockNumber)
         return blockNumber;
     } else {
         return 0;
@@ -119,3 +116,56 @@ export function filterEthereumTransactions(transactions: any[], payment: Payment
     });
 }
 
+//* Binance
+// Function to get the last transactions for an Ethereum payment address
+export async function getLastTransactionsBinance(payment: Payment): Promise<Response> {
+    const finalUrl = linksmith(coinData.binance.accounts, {
+        queryParams: {
+            apikey: BSC_SACN_API_KEY,
+            module: "account",
+            chainid: "1",
+            action: "txlist",
+            address: payment.address,
+            offset: "1",
+            sort: "desc",
+            startblock: "0",
+            endblock: "99999999",
+            page: "1",
+        }
+    });
+    
+    return await fetch(finalUrl);
+}
+
+export async function getLastBlockNumberBinance(): Promise<number> {
+    const finalUrl = linksmith(coinData.binance.block, {
+        queryParams: {
+            apikey: BSC_SACN_API_KEY,
+            module: "proxy",
+            action: "eth_blockNumber",
+        }
+    });
+
+    const response = await fetch(finalUrl);
+    const data = await response.json();
+
+    if (data.result) {
+        const blockNumber = parseInt(data.result, 16);
+        console.log("🚀 ~ getLastBlockNumberEthereum ~ blockNumber:", blockNumber)
+        return blockNumber;
+    } else {
+        return 0;
+    }
+}
+
+export function filterBinanceTransactions(transactions: any[], payment: Payment): any[] {
+    return transactions.filter(tx => {
+        const timestamp = timeFixtoMiliSec(tx.timeStamp);
+        let recieverAddress: string | undefined;
+        if (tx.to != undefined) {
+            recieverAddress = tx.to;
+        }
+
+        return timestamp > +payment.time && timestamp < +payment.expiration && payment.address == recieverAddress;
+    });
+}

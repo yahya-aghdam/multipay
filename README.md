@@ -22,6 +22,7 @@ Multipay is a multi cryptocurrency payment gateway as a microservice that facili
     - [Development](#development)
     - [Production](#production)
   - [Example of gRPC request](#example-of-grpc-request)
+    - [coin types](#coin-types)
     - [Add payment](#add-payment)
     - [Verify payment](#verify-payment)
   - [Project Structure](#project-structure)
@@ -98,6 +99,14 @@ npm run docker:build
 ```
 
 ## Example of gRPC request
+
+### coin types
+
+| Coin name             | Type     | value        |
+| --------------------- | -------- | ------------ |
+| `Tron`                | `string` | `tron`       |
+| `Ethereum`            | `string` | `ethereum`   |
+| `Binance smart chain` | `string` | `smartchain` |
 
 ### Add payment
 

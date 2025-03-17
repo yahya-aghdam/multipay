@@ -3,6 +3,7 @@ import { MongoDriver } from '@mikro-orm/mongodb';
 import { MySqlDriver } from '@mikro-orm/mysql';
 import { PostgreSqlDriver } from '@mikro-orm/postgresql';
 import { PAYMENT_EXPIRATION_TIME_MIN } from '../config/dotenv';
+import { allowedCoins } from '../config/constants';
 
 /**
  * Checks whether a given object is empty.
@@ -94,4 +95,31 @@ export function expirationTimeStr(): string {
  */
 export function unixToIsoStr(unixTimestamp: string): string {
     return new Date(unixTimestamp).toISOString();
+}
+
+
+
+/**
+ * Handles coins that are not supported by mapping them to a supported coin by Trust wallet.
+ *
+ * @param coin - The coin to be checked and potentially mapped.
+ * @returns An object containing:
+ *  - `valid`: A boolean indicating if the coin is valid.
+ *  - `coin`: The mapped coin if the original coin is not supported, otherwise an empty string.
+ */
+export function notSupportedCoinsHandler(coin: string): { valid: boolean, coin: string } {
+
+    if (coin == "smartchain") {
+        return { valid: allowedCoins.includes(coin), coin: "ethereum"}
+    }
+
+    if (coin == "usdt_trc20") {
+        return { valid: allowedCoins.includes(coin), coin: "tron"}
+    }
+
+    if (coin == "usdt_bep20") { 
+        return { valid: allowedCoins.includes(coin), coin: "smartchain"}
+    }
+
+    return {valid: false, coin:""}
 }

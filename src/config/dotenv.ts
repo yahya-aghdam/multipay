@@ -17,7 +17,10 @@ export const DB_NAME = process.env.DB_NAME as string;
 export const PAYMENT_EXPIRATION_TIME_MIN = process.env.PAYMENT_EXPIRATION_TIME_MIN as string;
 
 // Exporting the WALLET_STRENGTH environment variable as a string
-export const WALLET_STRENGTH = process.env.WALLET_STRENGTH as string;
+export const WALLET_STRENGTH = process.env.WALLET_STRENGTH as string || "128";
 
-// Exporting the ETHER_SCAN_API_KEY environment variable as a string
+// Exporting the ETHER_SCAN_API_KEY for Ethereum environment variable as a string
 export const ETHER_SCAN_API_KEY = process.env.ETHER_SCAN_API_KEY as string;
+
+// Exporting the BSC_SACN_API_KEY for Binance Smart Chain environment variable as a string
+export const BSC_SACN_API_KEY = process.env.BSC_SACN_API_KEY as string;

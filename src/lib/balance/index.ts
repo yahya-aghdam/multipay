@@ -1,13 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Payment } from "../../db/entity"
 import { coinData, noAction } from "./vars"
-import { filterEthereumTransactions, filterTronTransactions, getLast5TransactionsTron, getLastBlockNumberEthereum, getLastBlockNumberTron, getLastTransactionsEthereum, sunAmountToNormal, weiAmountToNormal } from "./utils"
+import { filterBinanceTransactions, filterEthereumTransactions, filterTronTransactions, getLast5TransactionsTron, getLastBlockNumberBinance, getLastBlockNumberEthereum, getLastBlockNumberTron, getLastTransactionsBinance, getLastTransactionsEthereum, sunAmountToNormal, weiAmountToNormal } from "./utils"
 
 export default class Balance {
 
     private coinHandlers: Record<string, (payment: Payment) => Promise<{ verify: boolean, blockNumber: number, isConfirmed: boolean }>> = {
         "tron": this.getTronBalance.bind(this),
         "ethereum": this.getEthereumBalance.bind(this),
+        "binance": this.getBinanceBalance.bind(this),
     }
 
     // Client
@@ -98,6 +99,21 @@ export default class Balance {
             filterEthereumTransactions,
             weiAmountToNormal,
             getLastBlockNumberEthereum,
+            coinData.ethereum.networkConfirmationNumber,
+            (transaction) => transaction.value,
+            (transaction) => transaction.blockNumber
+        )
+    }
+
+    // Binance
+    private async getBinanceBalance(payment: Payment): Promise<{ verify: boolean, blockNumber: number, isConfirmed: boolean }> {
+        return await this.getBalance(
+            payment,
+            getLastTransactionsBinance,
+            "result",
+            filterBinanceTransactions,
+            weiAmountToNormal,
+            getLastBlockNumberBinance,
             coinData.ethereum.networkConfirmationNumber,
             (transaction) => transaction.value,
             (transaction) => transaction.blockNumber

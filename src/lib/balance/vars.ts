@@ -17,7 +17,16 @@ export const coinData = {
         block: "https://api.etherscan.io/api",
         // Number of network confirmations required for Ethereum transactions
         networkConfirmationNumber: 1
-    }
+    },
+    // Data related to Binance Smart Chain
+    binance: {
+        // API endpoint for Binance Smart Chain accounts
+        accounts: "https://api.bscscan.com/api",
+        // API endpoint for getting the current block on the Binance Smart Chain blockchain
+        block: "https://api.bscscan.com/api",
+        // Number of network confirmations required for Binance Smart Chain transactions
+        networkConfirmationNumber: 1
+    },
 }
 
 // Exporting a default action object with default values for amount, block number, and confirmation status
