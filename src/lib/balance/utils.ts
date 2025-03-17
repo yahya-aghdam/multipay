@@ -118,7 +118,7 @@ export function filterEthereumTransactions(transactions: any[], payment: Payment
 
 //* Binance
 // Function to get the last transactions for an Ethereum payment address
-export async function getLastTransactionsBinance(payment: Payment): Promise<Response> {
+export async function getLastTransactionsBinanceSmartChain(payment: Payment): Promise<Response> {
     const finalUrl = linksmith(coinData.binance.accounts, {
         queryParams: {
             apikey: BSC_SACN_API_KEY,
@@ -137,7 +137,7 @@ export async function getLastTransactionsBinance(payment: Payment): Promise<Resp
     return await fetch(finalUrl);
 }
 
-export async function getLastBlockNumberBinance(): Promise<number> {
+export async function getLastBlockNumberBinanceSmartChain(): Promise<number> {
     const finalUrl = linksmith(coinData.binance.block, {
         queryParams: {
             apikey: BSC_SACN_API_KEY,
@@ -151,14 +151,13 @@ export async function getLastBlockNumberBinance(): Promise<number> {
 
     if (data.result) {
         const blockNumber = parseInt(data.result, 16);
-        console.log("🚀 ~ getLastBlockNumberEthereum ~ blockNumber:", blockNumber)
         return blockNumber;
     } else {
         return 0;
     }
 }
 
-export function filterBinanceTransactions(transactions: any[], payment: Payment): any[] {
+export function filterBinanceSmartChainTransactions(transactions: any[], payment: Payment): any[] {
     return transactions.filter(tx => {
         const timestamp = timeFixtoMiliSec(tx.timeStamp);
         let recieverAddress: string | undefined;

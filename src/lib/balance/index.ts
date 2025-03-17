@@ -1,14 +1,26 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Payment } from "../../db/entity"
 import { coinData, noAction } from "./vars"
-import { filterBinanceTransactions, filterEthereumTransactions, filterTronTransactions, getLast5TransactionsTron, getLastBlockNumberBinance, getLastBlockNumberEthereum, getLastBlockNumberTron, getLastTransactionsBinance, getLastTransactionsEthereum, sunAmountToNormal, weiAmountToNormal } from "./utils"
+import {
+    filterBinanceSmartChainTransactions,
+    filterEthereumTransactions,
+    filterTronTransactions,
+    getLast5TransactionsTron,
+    getLastBlockNumberBinanceSmartChain,
+    getLastBlockNumberEthereum,
+    getLastBlockNumberTron,
+    getLastTransactionsBinanceSmartChain,
+    getLastTransactionsEthereum,
+    sunAmountToNormal,
+    weiAmountToNormal
+} from "./utils"
 
 export default class Balance {
 
     private coinHandlers: Record<string, (payment: Payment) => Promise<{ verify: boolean, blockNumber: number, isConfirmed: boolean }>> = {
         "tron": this.getTronBalance.bind(this),
         "ethereum": this.getEthereumBalance.bind(this),
-        "binance": this.getBinanceBalance.bind(this),
+        "smartchain": this.getBinanceSmartChainBalance.bind(this),
     }
 
     // Client
@@ -106,14 +118,14 @@ export default class Balance {
     }
 
     // Binance
-    private async getBinanceBalance(payment: Payment): Promise<{ verify: boolean, blockNumber: number, isConfirmed: boolean }> {
+    private async getBinanceSmartChainBalance(payment: Payment): Promise<{ verify: boolean, blockNumber: number, isConfirmed: boolean }> {
         return await this.getBalance(
             payment,
-            getLastTransactionsBinance,
+            getLastTransactionsBinanceSmartChain,
             "result",
-            filterBinanceTransactions,
+            filterBinanceSmartChainTransactions,
             weiAmountToNormal,
-            getLastBlockNumberBinance,
+            getLastBlockNumberBinanceSmartChain,
             coinData.ethereum.networkConfirmationNumber,
             (transaction) => transaction.value,
             (transaction) => transaction.blockNumber
