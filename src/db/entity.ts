@@ -14,7 +14,7 @@ export class Payment {
     paymentId!: string;
 
     @Property()
-    coin!: string;
+    coin!: string ;
 
     @Property()
     amount!: string;

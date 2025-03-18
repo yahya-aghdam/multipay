@@ -1,9 +1,11 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { MongoDriver } from '@mikro-orm/mongodb';
 import { MySqlDriver } from '@mikro-orm/mysql';
 import { PostgreSqlDriver } from '@mikro-orm/postgresql';
 import { PAYMENT_EXPIRATION_TIME_MIN } from '../config/dotenv';
-import { allowedCoins } from '../config/constants';
+import { allowedCoins, notSupportedCoins } from '../config/constants';
 
 /**
  * Checks whether a given object is empty.
@@ -98,6 +100,17 @@ export function unixToIsoStr(unixTimestamp: string): string {
 }
 
 
+export function fixTimeToMiliSec(time: string): number {
+    if (time.length == 10) {
+        return +time * 1000;
+    } else {
+        if (time.length == 13){
+            return +time;
+        } else {
+            return new Date(time).getTime();
+        }
+    }
+}
 
 /**
  * Handles coins that are not supported by mapping them to a supported coin by Trust wallet.
@@ -108,18 +121,18 @@ export function unixToIsoStr(unixTimestamp: string): string {
  *  - `coin`: The mapped coin if the original coin is not supported, otherwise an empty string.
  */
 export function notSupportedCoinsHandler(coin: string): { valid: boolean, coin: string } {
-
-    if (coin == "smartchain") {
-        return { valid: allowedCoins.includes(coin), coin: "ethereum"}
+    const valid = allowedCoins.includes(coin)
+    if (notSupportedCoins[coin]) {
+        coin = notSupportedCoins[coin]
     }
 
-    if (coin == "usdt_trc20") {
-        return { valid: allowedCoins.includes(coin), coin: "tron"}
-    }
+    return { valid, coin }
+}
 
-    if (coin == "usdt_bep20") { 
-        return { valid: allowedCoins.includes(coin), coin: "smartchain"}
+export function dataKeyHandler(keys: string[], data: any): any {
+    let finalData = data
+    for (const [index, value] of keys.entries()) {
+        finalData = finalData[value]
     }
-
-    return {valid: false, coin:""}
+    return finalData
 }
