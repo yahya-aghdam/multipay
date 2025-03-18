@@ -18,6 +18,7 @@ Multipay is a multi cryptocurrency payment gateway as a microservice that facili
   - [Table of Contents](#table-of-contents)
   - [Installation](#installation)
   - [`.env` file](#env-file)
+  - [Supported databases](#supported-databases)
   - [Usage](#usage)
     - [Development](#development)
     - [Production](#production)
@@ -67,6 +68,22 @@ WALLET_STRENGTH=your_wallet_strength # in bits
 ETHER_SCAN_API_KEY=your_ether_scan_api_key # if you support Ethereum sign in  https://etherscan.io and paste your api key in here
 BSC_SACN_API_KEY=your_bsc_sacn_api_key # if you support Binance Smart Chain sign in  https://bscscan.com and paste your api key in here
 ```
+
+## Supported databases
+
+Based on `DB_URL` variable in `.env` file, multipay can use MySQL, PostgreSQL or MongoDB.
+
+- ✅ MySQL
+- ✅ PostgreSQL
+- ✅ MongoDB
+
+Database connection URL:
+
+| Type       |        default connection url        |
+| :--------- | :----------------------------------: |
+| mongo      |      mongodb://127.0.0.1:27017       |
+| mysql      |     mysql://root@127.0.0.1:3306      |
+| postgresql | postgresql://postgres@127.0.0.1:5432 |
 
 ## Usage
 
