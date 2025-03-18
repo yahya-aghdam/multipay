@@ -7,8 +7,9 @@ Multipay is a multi cryptocurrency payment gateway as a microservice that facili
 - ✅ Tron
 - ✅ Ethereum
 - ✅ Binance smart chain
-- 🔜 USDT TRC-20
-- 🔜 USDT BEP-20
+- ✅ Pactus
+- ✅ USDT TRC-20
+- ✅ USDT BEP-20
 
 ## Table of Contents
 
@@ -69,6 +70,8 @@ ETHER_SCAN_API_KEY=your_ether_scan_api_key # if you support Ethereum sign in the
 ## Usage
 
 ### Development
+
+You can add your own custom coins in `src/balance/index.ts` file.
 
 To start the development server locally, with hot reloading:
 
