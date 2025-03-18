@@ -39,8 +39,6 @@ export function filterBinanceSmartChainTokenTransactions(transactions: any[], pa
         const timestamp = fixTimeToMiliSec(tx.timeStamp);
         const recieverAddress= tx.to;
 
-        console.log("🚀 ~ filterBinanceSmartChainTokenTransactions ~ recieverAddress:", recieverAddress)
-        console.log("🚀 ~ filterBinanceSmartChainTokenTransactions ~ payment.address:", payment.address)
         return timestamp > +payment.time && timestamp < +payment.expiration && payment.address == recieverAddress;
     });
 }
