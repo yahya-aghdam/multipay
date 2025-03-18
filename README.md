@@ -26,6 +26,7 @@ Multipay is a multi cryptocurrency payment gateway as a microservice that facili
     - [coin types](#coin-types)
     - [Add payment](#add-payment)
     - [Verify payment](#verify-payment)
+    - [Get payment details](#get-payment-details)
   - [Project Structure](#project-structure)
   - [License](#license)
 
@@ -122,14 +123,14 @@ npm run docker:build
 
 ### coin types
 
-| Coin name             | Type     | value        |
-| --------------------- | -------- | ------------ |
-| `Tron`                | `string` | `tron`       |
-| `Ethereum`            | `string` | `ethereum`   |
-| `Binance smart chain` | `string` | `smartchain` |
-| `Pactus`              | `string` | `pactus`     |
-| `USDT TRC-20`         | `string` | `usdt_trc20` |
-| `USDT BEP-20`         | `string` | `usdt_bep20` |
+| Coin name                 | Type     | value        |
+| ------------------------- | -------- | ------------ |
+| Tron (TRX)                | `string` | `tron`       |
+| Ethereum (ETH)            | `string` | `ethereum`   |
+| Binance smart chain (BNB) | `string` | `smartchain` |
+| Pactus (PAC)              | `string` | `pactus`     |
+| USDT TRC-20 (USDT)        | `string` | `usdt_trc20` |
+| USDT BEP-20 (USDT)        | `string` | `usdt_bep20` |
 
 ### Add payment
 
@@ -175,6 +176,57 @@ Response:
     "address": "0xFF49d5Ff0Da6cB8825ba644F0262a514Ec7830C0",
     "isPaid": true,
     "isConfirmed": true,
+}
+```
+
+### Get payment details
+
+You can add any type of filter you want
+
+Message body:
+
+| Field        | Type     | Description                |
+| ------------ | -------- | -------------------------- |
+| `coin`       | `string` | Name of coin               |
+| `amount`     | `string` | Amount of payment          |
+| `expiration` | `string` | Expiration time of payment |
+| `paymentId`  | `string` | ID of payment              |
+| `clientId`   | `string` | ID of client               |
+| `address`    | `string` | Address of payment         |
+| `time`       | `string` | Time of payment            |
+| `offset`     | `int32`  | Offset of payments         |
+| `limit`      | `int32`  | Limit of payments          |
+| `sort`       | `string` | Sort of payments           |
+| `orderBy`    | `string` | Order by of payments       |
+
+example:
+
+```json
+{
+    "coin": "ethereum",
+    "clientId": "testClientId",
+    "offset": 3,
+    "limit": 10,
+    "sort": "desc",
+    "orderBy": "amount"
+}
+```
+
+Response:
+
+```json
+{
+    "data": [
+        {
+            "coin": "ethereum",
+            "amount": "0.001",
+            "expiration": "1742146248273",
+            "paymentId": "53d10ad5-3be0-4ef3-ac30-6a88afb4e364",
+            "clientId": "testClientId",
+            "address": "0xFF49d5Ff0Da6cB8825ba644F0262a514Ec7830C0",
+            "time": "1742145048273"
+        }
+    ]
 }
 ```
 

@@ -1,5 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ServerUnaryCall, sendUnaryData, status } from "@grpc/grpc-js";
-import { CreatePaymentRequest, CreatePaymentResult, VerifyPaymentRequest, VerifyPaymentResult } from "./multipay";
+import { CreatePaymentRequest, CreatePaymentResult, GetPaymentDetailsRequest, GetPaymentDetailsResult, VerifyPaymentRequest, VerifyPaymentResult } from "./multipay";
 import { DB } from "../db/mikro_orm";
 import { Payment, Wallets } from '../db/entity';
 import { expirationTimeStr, notSupportedCoinsHandler, nowUnixStr } from "../lib";
@@ -186,4 +187,58 @@ export async function verifyPayment(
     }).catch((err) => {
         throw err;
     });
+}
+
+// Function to verify a payment
+export async function getPaymentDetails(
+    call: ServerUnaryCall<GetPaymentDetailsRequest, GetPaymentDetailsResult>,
+    callback: sendUnaryData<GetPaymentDetailsResult>
+) {
+    // Extracting the request from the call
+    const getPaymentDetailsRequest = call.request;
+
+    // Initializing the database
+    await db.init().then(async () => {
+
+        let options: any = {}
+        if (getPaymentDetailsRequest.sort && getPaymentDetailsRequest.orderBy) {
+            options.orderBy = { [getPaymentDetailsRequest.orderBy]: getPaymentDetailsRequest.sort }
+        } else {
+            if (getPaymentDetailsRequest.sort || getPaymentDetailsRequest.orderBy) {
+                callback({ code: status.INVALID_ARGUMENT }, null);
+            } else {
+                options = { orderBy: { time: "desc" } }
+            }
+        }
+
+        if (getPaymentDetailsRequest.offset) {
+            options.offset = getPaymentDetailsRequest.offset
+        } else {
+            options.offset = 0
+        }
+
+        if (getPaymentDetailsRequest.limit) {
+            options.limit = getPaymentDetailsRequest.limit
+        } else {
+            options.limit = 100
+        }
+
+        const skipedList = ['sort', 'orderBy', 'offset', 'limit']
+        const filter: any = {};
+        for (const [key, value] of Object.entries(getPaymentDetailsRequest)) {
+            if (value && !skipedList.includes(key)) {
+               
+                filter[key] = value;
+            }
+        }
+
+
+        const payments = await db.findMany(Payment, filter, options) as Payment[];
+        const getPaymentDetailsResult: GetPaymentDetailsResult = { data: payments }
+        callback(null, getPaymentDetailsResult);
+
+    }).catch((err) => {
+        throw err;
+    });
+
 }

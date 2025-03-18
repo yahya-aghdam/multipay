@@ -42,3 +42,36 @@ message VerifyPaymentResult {
 service VerifyPayment {
     rpc verifyPayment (VerifyPaymentRequest) returns (VerifyPaymentResult);
 }
+
+// Get payment details
+message GetPaymentDetailsRequest {
+    string coin = 1;
+    string amount = 2;
+    string expiration = 3;
+    string paymentId = 4;
+    string clientId = 5;
+    string address = 6;
+    string time = 7;
+    int32 offset = 8;
+    int32 limit = 9;
+    string sort = 10;
+    string orderBy = 11;
+}
+
+message GetPaymentDetailsResult {
+    repeated PaymentDetail data = 1;
+}
+
+message PaymentDetail {
+    string coin = 1;
+    string amount = 2;
+    string expiration = 3;
+    string paymentId = 4;
+    string clientId = 5;
+    string address = 6;
+    string time = 7;
+}
+
+service GetPaymentDetails {
+    rpc getPaymentDetails (GetPaymentDetailsRequest) returns (GetPaymentDetailsResult);
+}
