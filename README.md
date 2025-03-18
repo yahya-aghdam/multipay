@@ -65,6 +65,7 @@ DB_NAME=your_db_name
 PAYMENT_EXPIRATION_TIME_MIN=your_payment_expiration_time # in minutes
 WALLET_STRENGTH=your_wallet_strength # in bits
 ETHER_SCAN_API_KEY=your_ether_scan_api_key # if you support Ethereum sign in the https://etherscan.io and paste your api key in here
+BSC_SACN_API_KEY=your_bsc_sacn_api_key # if you support Binance Smart Chain sign in the https://bscscan.com and paste your api key in here
 ```
 
 ## Usage
