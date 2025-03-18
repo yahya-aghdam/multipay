@@ -64,8 +64,8 @@ DB_URL=your_db_url
 DB_NAME=your_db_name
 PAYMENT_EXPIRATION_TIME_MIN=your_payment_expiration_time # in minutes
 WALLET_STRENGTH=your_wallet_strength # in bits
-ETHER_SCAN_API_KEY=your_ether_scan_api_key # if you support Ethereum sign in the https://etherscan.io and paste your api key in here
-BSC_SACN_API_KEY=your_bsc_sacn_api_key # if you support Binance Smart Chain sign in the https://bscscan.com and paste your api key in here
+ETHER_SCAN_API_KEY=your_ether_scan_api_key # if you support Ethereum sign in  https://etherscan.io and paste your api key in here
+BSC_SACN_API_KEY=your_bsc_sacn_api_key # if you support Binance Smart Chain sign in  https://bscscan.com and paste your api key in here
 ```
 
 ## Usage
@@ -110,6 +110,9 @@ npm run docker:build
 | `Tron`                | `string` | `tron`       |
 | `Ethereum`            | `string` | `ethereum`   |
 | `Binance smart chain` | `string` | `smartchain` |
+| `Pactus`              | `string` | `pactus`     |
+| `USDT TRC-20`         | `string` | `usdt_trc20` |
+| `USDT BEP-20`         | `string` | `usdt_bep20` |
 
 ### Add payment
 
