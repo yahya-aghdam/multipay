@@ -19,5 +19,13 @@ export const paymentResolvers = {
         ) => {
             return await PaymentService.createPayment(db,  coin, amount, clientId);
         },
+
+        verifyPayment: async(
+            _: any,
+            {paymentId}: any,
+            { db }: { db: DB }
+        ) => {
+            return await PaymentService.verifyPayment(db, paymentId);
+        },
     },
 };

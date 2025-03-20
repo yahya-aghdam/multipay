@@ -5,6 +5,7 @@ import { paymentTypeDefs } from './payment/payment.typeDefs';
 import { walletResolvers } from './wallet/wallet.resolvers';
 import { walletTypeDefs } from './wallet/wallet.typeDefs';
 import { DB } from '../db/mikro_orm';
+import { GRAPHQL_PORT } from '../config/dotenv';
 
 
 export async function graphQlServer(db:DB)  {
@@ -18,7 +19,7 @@ export async function graphQlServer(db:DB)  {
     });
 
     // Start the Apollo server
-    server.listen().then(({ url }) => {
+    server.listen({  port: GRAPHQL_PORT }).then(({ url }) => {
         console.log(`graphQl server running on: ${url}`);
     });
 };

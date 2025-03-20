@@ -11,13 +11,4 @@ export const walletResolvers = {
             return await WalletService.getWalletByAddress(db, address);
         },
     },
-    Mutation: {
-        createWallet: async (
-            _: any,
-            { coin }: any,
-            { db }: { db: DB }
-        ) => {
-            return await WalletService.createWallet(db, coin);
-        },
-    },
 };

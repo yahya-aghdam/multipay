@@ -14,7 +14,4 @@ export const walletTypeDefs = gql`
     walletByAddress(address: String!): Wallet
   }
 
-  type Mutation {
-    createWallet(address: String!, mnemonic: String!, coin: String!, amount: String!): Wallet!
-  }
 `;

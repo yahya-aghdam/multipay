@@ -56,12 +56,7 @@ export function expireTimeMaker(days: number): Date {
 export function validateEnv() {
     // List of required environment variables
     const requiredVars = [
-        "PROTO_URL",
-        "PROTO_PORT",
         "DB_URL",
-        "DB_NAME",
-        "PAYMENT_EXPIRATION_TIME_MIN",
-        "WALLET_STRENGTH",
     ];
     // Filtering out missing environment variables
     const missingVars = requiredVars.filter((envVar) => !process.env[envVar]);

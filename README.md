@@ -1,6 +1,6 @@
 # multipay
 
-Multipay is a multi cryptocurrency payment gateway as a microservice that facilitates the creation and management of wallets, balance checking, and payment verification and confirmation for various cryptocurrencies. It leverages [Trust Wallet Core](https://github.com/TrustWallet/wallet-core) for wallet functionalities and uses [gRPC](https://grpc.io/) for communication. Also it uses some nodes for balance checking and payment confirmion.
+Multipay is a multi cryptocurrency payment gateway as a microservice that facilitates the creation and management of wallets, balance checking, and payment verification and confirmation for various cryptocurrencies. It leverages [Trust Wallet Core](https://github.com/TrustWallet/wallet-core) for wallet functionalities and uses [gRPC](https://grpc.io/) for and [graphQL](https://graphql.org/) for payment management.
 
 ## Supported Cryptocurrencies
 
@@ -26,7 +26,15 @@ Multipay is a multi cryptocurrency payment gateway as a microservice that facili
     - [coin types](#coin-types)
     - [Add payment](#add-payment)
     - [Verify payment](#verify-payment)
-    - [Get payment details](#get-payment-details)
+  - [GraphQL Schema](#graphql-schema)
+    - [Types](#types)
+    - [Queries](#queries)
+    - [Mutations](#mutations)
+    - [Example Queries and Mutations](#example-queries-and-mutations)
+      - [Query: Get All Payments](#query-get-all-payments)
+      - [Query: Get Payment by ID](#query-get-payment-by-id)
+      - [Mutation: Create Payment](#mutation-create-payment)
+      - [Mutation: Verify Payment](#mutation-verify-payment)
   - [Project Structure](#project-structure)
   - [License](#license)
 
@@ -62,6 +70,7 @@ Multipay is a multi cryptocurrency payment gateway as a microservice that facili
 ```ini
 PROTO_URL=your_proto_url
 PROTO_PORT=your_proto_port
+GRAPHQL_PORT=your_graphql_port
 DB_URL=your_db_url
 DB_NAME=your_db_name
 PAYMENT_EXPIRATION_TIME_MIN=your_payment_expiration_time # in minutes
@@ -179,54 +188,150 @@ Response:
 }
 ```
 
-### Get payment details
+## GraphQL Schema
 
-You can add any type of filter you want
+The GraphQL schema defines the types and operations available in the API. Here are the main types and operations:
 
-Message body:
+### Types
 
-| Field        | Type     | Description                |
-| ------------ | -------- | -------------------------- |
-| `coin`       | `string` | Name of coin               |
-| `amount`     | `string` | Amount of payment          |
-| `expiration` | `string` | Expiration time of payment |
-| `paymentId`  | `string` | ID of payment              |
-| `clientId`   | `string` | ID of client               |
-| `address`    | `string` | Address of payment         |
-| `time`       | `string` | Time of payment            |
-| `offset`     | `int32`  | Offset of payments         |
-| `limit`      | `int32`  | Limit of payments          |
-| `sort`       | `string` | Sort of payments           |
-| `orderBy`    | `string` | Order by of payments       |
+```graphql
+type Payment {
+  _id: String!
+  paymentId: String!
+  coin: String!
+  amount: String!
+  expiration: String!
+  clientId: String!
+  address: String!
+  isPaid: Boolean!
+  blockNumber: Int!
+  isConfirmed: Boolean!
+  time: String!
+}
 
-example:
+type Payment_CreatePaymentOutput {
+  paymentId: String!
+  coin: String!
+  amount: String!
+  expiration: String!
+  clientId: String!
+  address: String!
+  time: String!
+}
 
-```json
-{
-    "coin": "ethereum",
-    "clientId": "testClientId",
-    "offset": 3,
-    "limit": 10,
-    "sort": "desc",
-    "orderBy": "amount"
+type Payment_VerifyPaymentOutput {
+  coin: String!
+  amount: String!
+  expiration: String!
+  paymentId: String!
+  clientId: String!
+  address: String!
+  isPaid: Boolean!
+  isConfirmed: Boolean!
 }
 ```
 
-Response:
+### Queries
 
-```json
-{
-    "data": [
-        {
-            "coin": "ethereum",
-            "amount": "0.001",
-            "expiration": "1742146248273",
-            "paymentId": "53d10ad5-3be0-4ef3-ac30-6a88afb4e364",
-            "clientId": "testClientId",
-            "address": "0xFF49d5Ff0Da6cB8825ba644F0262a514Ec7830C0",
-            "time": "1742145048273"
-        }
-    ]
+```graphql
+type Query {
+  payments: [Payment!]!
+  paymentById(paymentId: String!): Payment
+}
+```
+
+### Mutations
+
+```graphql
+type Mutation {
+  createPayment(
+    coin: String!
+    amount: String!
+    clientId: String!
+  ): Payment_CreatePaymentOutput!
+
+  verifyPayment(
+    paymentId: String!
+  ): Payment_VerifyPaymentOutput!
+}
+```
+
+### Example Queries and Mutations
+
+#### Query: Get All Payments
+
+```graphql
+query {
+  payments {
+    _id
+    paymentId
+    coin
+    amount
+    expiration
+    clientId
+    address
+    isPaid
+    blockNumber
+    isConfirmed
+    time
+  }
+}
+```
+
+#### Query: Get Payment by ID
+
+```graphql
+query {
+  paymentById(paymentId: "your_payment_id") {
+    _id
+    paymentId
+    coin
+    amount
+    expiration
+    clientId
+    address
+    isPaid
+    blockNumber
+    isConfirmed
+    time
+  }
+}
+```
+
+#### Mutation: Create Payment
+
+```graphql
+mutation {
+  createPayment(
+    coin: "ethereum",
+    amount: "0.001",
+    clientId: "testClientId"
+  ) {
+    paymentId
+    coin
+    amount
+    expiration
+    clientId
+    address
+    time
+  }
+}
+```
+
+#### Mutation: Verify Payment
+
+```graphql
+mutation {
+  verifyPayment(paymentId: "your_payment_id") {
+    coin
+    amount
+    expiration
+    paymentId
+    clientId
+    address
+    isPaid
+    isConfirmed
+  }
 }
 ```
 

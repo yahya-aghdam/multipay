@@ -14,6 +14,27 @@ export const paymentTypeDefs = gql`
     isConfirmed: Boolean!
     time: String!
   }
+  
+  type Payment_CreatePaymentOutput {
+    paymentId: String!
+    coin: String!
+    amount: String!
+    expiration: String!
+    clientId: String!
+    address: String!
+    time: String!
+  }
+
+  type Payment_VerifyPaymentOutput {
+    coin: String!
+    amount: String!
+    expiration: String!
+    paymentId: String!
+    clientId: String!
+    address: String!
+    isPaid: Boolean!
+    isConfirmed: Boolean!
+  }
 
   type Query {
     payments: [Payment!]!
@@ -22,14 +43,13 @@ export const paymentTypeDefs = gql`
 
   type Mutation {
     createPayment(
-      paymentId: String!
       coin: String!
       amount: String!
-      expiration: String!
       clientId: String!
-      address: String!
-      blockNumber: Int!
-      time: String!
-    ): Payment!
+    ): Payment_CreatePaymentOutput!
+
+    verifyPayment(
+      paymentId: String!
+    ): Payment_VerifyPaymentOutput!
   }
 `;
