@@ -40,21 +40,3 @@ export class Payment {
     @Property()
     time!: string;
 }
-
-
-@Entity()
-export class Wallets {
-
-    @PrimaryKey()
-    _id: string = randomUUID();
-
-    @Index()
-    @Property()
-    address!: string;
-
-    @Property()
-    mnemonic!: string;
-
-    @Property()
-    coin!: string;
-}

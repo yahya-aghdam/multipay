@@ -2,7 +2,7 @@
 
 import { dataKeyHandler } from ".."
 import { balanceNoAction, coinData } from "../../config/constants"
-import { Payment } from "../../db/entity"
+import { Payment } from "../../db/entities/payments"
 import { getLastTransactionsBinanceSmartChain, filterBinanceSmartChainTransactions, getLastBlockNumberBinanceSmartChain } from "./coin/binance"
 import { getLastTransactionsEthereum, filterEthereumTransactions, weiAmountToNormal, getLastBlockNumberEthereum } from "./coin/ethereum"
 import { getLastTransactionsPactus, filterPactusTransactions, pactusAmountToNormal, getLastBlockNumberPactus } from "./coin/pactus"

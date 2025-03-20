@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { TronWeb } from "tronweb";
 import { fixTimeToMiliSec } from "../..";
-import { Payment } from "../../../db/entity";
 import linksmith from "linksmith";
 import { coinData } from "../../../config/constants";
+import { Payment } from "../../../db/entities/payments";
 
 // Function to convert Sun (Tron's smallest unit) to normal Tron amount
 export function sunAmountToNormal(data: number): string {

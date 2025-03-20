@@ -4,7 +4,7 @@ import linksmith from "linksmith";
 import { promisify } from "util";
 import { fixTimeToMiliSec } from "../..";
 import { coinData } from "../../../config/constants";
-import { Payment } from "../../../db/entity";
+import { Payment } from "../../../db/entities/payments";
 
 // Function to get the last transactions for an Pactus payment address
 export async function getLastTransactionsPactus(payment: Payment): Promise<Response> {

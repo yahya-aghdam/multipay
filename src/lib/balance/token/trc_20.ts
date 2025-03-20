@@ -2,7 +2,7 @@
 import linksmith from "linksmith";
 import { fixTimeToMiliSec } from "../..";
 import { coinData } from "../../../config/constants";
-import { Payment } from "../../../db/entity";
+import { Payment } from "../../../db/entities/payments";
 
 // Function to filter Tron Tokens transactions based on payment details
 export function filterTronTokensTransactions(transactions: any[], payment: Payment): any[] {

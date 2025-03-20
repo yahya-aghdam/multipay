@@ -3,7 +3,7 @@ import linksmith from "linksmith";
 import { fixTimeToMiliSec } from "../..";
 import { coinData, tokenList } from "../../../config/constants";
 import { BSC_SACN_API_KEY } from "../../../config/dotenv";
-import { Payment } from "../../../db/entity";
+import { Payment } from "../../../db/entities/payments";
 
 // Function to get the last transactions for an Ethereum payment address
 export async function getLastTransactionsBinanceSmartChainTokens(payment: Payment): Promise<Response> {

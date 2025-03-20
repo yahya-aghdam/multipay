@@ -3,7 +3,7 @@ import { CoinTypeLocal } from "./utils"
 import { customCoins } from "../../config/constants"
 
 // Defining the Wallet class
-export default class MainWallet {
+export default class Wallet {
     // Defining a public property to hold the strength of the wallet
     public strength: number | string
 
@@ -25,6 +25,7 @@ export default class MainWallet {
             return this.makeCustomCoinWallet(coinType)
         }
     }
+
 
     // Method to check if the coin is a main coin
     private isMainCoin(coinType: keyof typeof CoinTypeLocal): boolean {

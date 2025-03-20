@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import linksmith from "linksmith";
 import { fixTimeToMiliSec } from "../..";
-import { Payment } from "../../../db/entity";
 import { ETHER_SCAN_API_KEY } from "../../../config/dotenv";
 import { coinData } from "../../../config/constants";
+import { Payment } from "../../../db/entities/payments";
 
 // Function to get the last transactions for an Ethereum payment address
 export async function getLastTransactionsEthereum(payment: Payment): Promise<Response> {

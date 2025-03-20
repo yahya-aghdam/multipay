@@ -1,8 +1,9 @@
 import { Connection, EntityManager, EntityName, IDatabaseDriver, MikroORM, Options } from '@mikro-orm/core';
 import { getDriver } from '../lib';
-import { Payment, Wallets } from './entity';
 import { dbDefualtName } from '../config/constants';
 import { DB_NAME, DB_URL } from '../config/dotenv';
+import { Payment } from './entities/payments';
+import { Wallets } from './entities/wallets';
 
 
 
