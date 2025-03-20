@@ -22,6 +22,7 @@ Multipay is a multi cryptocurrency payment gateway as a microservice that facili
   - [Usage](#usage)
     - [Development](#development)
     - [Production](#production)
+  - [Postman example](#postman-example)
   - [Example of gRPC request](#example-of-grpc-request)
     - [coin types](#coin-types)
     - [Add payment](#add-payment)
@@ -127,6 +128,11 @@ To start the production server using Docker:
 ```sh
 npm run docker:build
 ```
+
+## Postman example
+
+You can use this invitation link to test app:
+[Postman example](https://app.getpostman.com/join-team?invie_code=a9f908c0257917207a95ea9bb3ddc1f772171fb37d05df712f94700f75d8482d&target_code=08b944b4912a3d2a0233dd587445fca3)
 
 ## Example of gRPC request
 
