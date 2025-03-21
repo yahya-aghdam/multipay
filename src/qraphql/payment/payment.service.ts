@@ -70,7 +70,7 @@ export const PaymentService = {
             } else {
                 // If there are no expired payments, create a new wallet and payment
                 const wallet = new Wallet(WALLET_STRENGTH);
-                const { mnemonic, address } = await wallet.make(coin as keyof typeof CoinTypeLocal);
+                const { mnemonic, address } = await wallet.make(notSupportedCoins.coin as keyof typeof CoinTypeLocal);
 
                 const newWallet = new Wallets();
                 newWallet.address = address;

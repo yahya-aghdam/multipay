@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { DB } from '../../db/mikro_orm';
 import { Wallets } from '../../db/entities/wallets';
 
@@ -6,7 +7,14 @@ export const WalletService = {
         return await db.findMany(Wallets, {}, {});
     },
 
-    getWalletByAddress: async (db: DB, address: string) => {
-        return await db.findOne(Wallets, { address });
+    getWalletBy: async (db: DB, address: string, coin: string) => {
+        const filter: any = {}
+        if (address) {
+            filter.address = address;
+        }
+        if (coin) {
+            filter.coin = coin;
+        }
+        return await db.findMany(Wallets, filter, {});
     },
 };

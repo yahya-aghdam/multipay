@@ -11,7 +11,7 @@ export const walletTypeDefs = gql`
 
   type Query {
     wallets: [Wallet!]!
-    walletByAddress(address: String!): Wallet
+    walletBy(address: String,coin: String): [Wallet!]!
   }
 
 `;

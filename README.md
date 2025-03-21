@@ -36,6 +36,8 @@ Multipay is a multi cryptocurrency payment gateway as a microservice that facili
       - [Query: Get Payment by ID](#query-get-payment-by-id)
       - [Mutation: Create Payment](#mutation-create-payment)
       - [Mutation: Verify Payment](#mutation-verify-payment)
+      - [Get all wallets](#get-all-wallets)
+    - [Get wallets by](#get-wallets-by)
   - [Project Structure](#project-structure)
   - [License](#license)
 
@@ -235,6 +237,14 @@ type Payment_VerifyPaymentOutput {
   isPaid: Boolean!
   isConfirmed: Boolean!
 }
+
+type Wallet {
+  _id: String!
+  address: String!
+  mnemonic: String!
+  coin: String!
+  amount: String!
+}
 ```
 
 ### Queries
@@ -243,6 +253,11 @@ type Payment_VerifyPaymentOutput {
 type Query {
   payments: [Payment!]!
   paymentById(paymentId: String!): Payment
+}
+
+type Query {
+  wallets: [Wallet!]!
+  walletBy(address: String,coin: String): [Wallet!]!
 }
 ```
 
@@ -338,6 +353,34 @@ mutation {
     isPaid
     isConfirmed
   }
+}
+```
+
+#### Get all wallets
+
+```graphql
+query WalletBy {
+    wallets {
+        _id
+        address
+        mnemonic
+        coin
+        amount
+    }
+}
+```
+
+### Get wallets by
+
+```graphql
+query WalletBy {
+    walletBy(coin: "ethereum") {
+        _id
+        address
+        mnemonic
+        coin
+        amount
+    }
 }
 ```
 

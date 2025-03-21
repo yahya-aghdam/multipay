@@ -7,8 +7,8 @@ export const walletResolvers = {
         wallets: async (_: any, __: any, { db }: { db: DB }) => {
             return await WalletService.getAllWallets(db);
         },
-        walletByAddress: async (_: any, { address }: { address: string }, { db }: { db: DB }) => {
-            return await WalletService.getWalletByAddress(db, address);
+        walletBy: async (_: any, { address, coin }: any, { db }: { db: DB }) => {
+            return await WalletService.getWalletBy(db, address, coin);
         },
     },
 };
