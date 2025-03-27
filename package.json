@@ -1,6 +1,6 @@
 {
   "name": "multipay",
-  "version": "1.0.0",
+  "version": "1.8.0",
   "description": "Multi Crypto payment gateway",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

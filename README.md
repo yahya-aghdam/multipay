@@ -1,5 +1,12 @@
 # multipay
 
+<p align="center">
+  <img src="./cw.png" alt="multipay logo" width="200" height="200" style="display: block; margin: 30 auto" />
+</p>
+
+![License](https://img.shields.io/badge/License-MIT-blue)
+![Version](https://img.shields.io/badge/Version-1.8.0-orange)
+
 Multipay is a multi cryptocurrency payment gateway as a microservice that facilitates the creation and management of wallets, balance checking, and payment verification and confirmation for various cryptocurrencies. It leverages [Trust Wallet Core](https://github.com/TrustWallet/wallet-core) for wallet functionalities and uses [gRPC](https://grpc.io/) for and [graphQL](https://graphql.org/) for payment management.
 
 ## Supported Cryptocurrencies
@@ -389,21 +396,34 @@ query WalletBy {
 ```text
 src/
 ├── config/           # Configuration files
-│   ├── constants.ts
-│   └── dotenv.ts
-├── db/              # Database related code
-│   ├── entity.ts
-│   └── mikro_orm.ts
-├── lib/             # Core library code
-│   ├── balance/     # Balance checking functionality
-│   │   ├── utils.ts
-│   │   └── vars.ts
-│   └── wallet/      # Wallet management
-│       └── index.ts
-└── protos/          # gRPC protocol definitions
-    ├── multipay.proto
-    └── multipay.service.proto.ts
+│   ├── constants.ts  # Application constants
+│   └── dotenv.ts     # Environment variable configuration
+├── db/               # Database related code
+│   ├── entity.ts     # Database entities
+│   └── mikro_orm.ts  # MikroORM configuration
+├── lib/              # Core library code
+│   ├── balance/      # Balance checking functionality
+│   │   ├── index.ts  # Main balance logic
+│   │   ├── utils.ts  # Utility functions for balance
+│   │   └── vars.ts   # Variables for balance logic
+│   └── wallet/       # Wallet management
+│       ├── index.ts  # Main wallet logic
+│       └── utils.ts  # Utility functions for wallet
+├── protos/           # gRPC protocol definitions
+│   ├── multipay.proto           # Protocol buffer definition
+│   └── multipay.service.proto.ts # Generated gRPC service
+├── graphql/          # GraphQL schema and resolvers
+│   ├── schema.ts     # GraphQL schema definition
+│   └── resolvers.ts  # GraphQL resolvers
+├── services/         # Business logic services
+│   ├── payment.service.ts # Payment-related logic
+│   └── wallet.service.ts  # Wallet-related logic
+├── utils/            # General utility functions
+│   ├── logger.ts     # Logging utility
+│   └── helpers.ts    # Helper functions
+└── index.ts          # Application entry point
 ```
+
 
 ## License
 
