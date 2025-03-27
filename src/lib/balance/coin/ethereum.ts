@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import linksmith from "linksmith";
 import { fixTimeToMiliSec } from "../..";
 import { ETHER_SCAN_API_KEY } from "../../../config/dotenv";

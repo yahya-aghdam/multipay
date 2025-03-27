@@ -8,7 +8,7 @@ import { DB } from '../db/mikro_orm';
 import { GRAPHQL_PORT } from '../config/dotenv';
 
 
-export async function graphQlServer(db:DB)  {
+export async function startGraphQlServer(db: DB): Promise<void> {
 
     const server = new ApolloServer({
         typeDefs: [paymentTypeDefs, walletTypeDefs],

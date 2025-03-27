@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { DB } from '../../db/mikro_orm';
 import { Wallets } from '../../db/entities/wallets';
 

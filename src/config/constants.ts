@@ -4,6 +4,8 @@ import { PROTO_PORT, PROTO_URL } from "./dotenv";
 // Constructing the proto_url by combining PROTO_URL and PROTO_PORT using linksmith
 export const proto_url = linksmith(PROTO_URL, { port: PROTO_PORT });
 
+export const graphql_url = linksmith("http://localhost", { port: 4000 });
+
 // Defining a constant for the default database name
 export const dbDefualtName = "multipay";
 

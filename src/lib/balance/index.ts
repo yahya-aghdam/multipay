@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+
 
 import { dataKeyHandler } from ".."
 import { balanceNoAction, coinData } from "../../config/constants"
@@ -52,13 +52,11 @@ export default class Balance {
             const transactions = dataKeyHandler(keysOfData, res)
 
             const filteredTransactions = filterTransactions(transactions, payment)
-            console.log("🚀 ~ Balance ~ filteredTransactions:", filteredTransactions)
 
             if (filteredTransactions.length > 0) {
                 const amount = extractAmount(filteredTransactions[0])
                 const blockNumber = extractBlockNumber(filteredTransactions[0])
                 const amountToNormal = convertAmount(amount)
-                console.log("🚀 ~ Balance ~ amountToNormal:", amountToNormal)
 
                 let verify = false
                 if (amountToNormal >= payment.amount) {

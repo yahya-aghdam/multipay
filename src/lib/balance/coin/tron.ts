@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { TronWeb } from "tronweb";
 import { fixTimeToMiliSec } from "../..";
 import linksmith from "linksmith";

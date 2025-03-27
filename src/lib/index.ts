@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable @typescript-eslint/no-explicit-any */
+
 
 import { MongoDriver } from '@mikro-orm/mongodb';
 import { MySqlDriver } from '@mikro-orm/mysql';

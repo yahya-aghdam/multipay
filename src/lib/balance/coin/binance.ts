@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import linksmith from "linksmith";
 import { fixTimeToMiliSec } from "../..";
 import { coinData } from "../../../config/constants";

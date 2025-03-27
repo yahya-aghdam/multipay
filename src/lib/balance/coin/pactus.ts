@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { exec } from "child_process";
 import linksmith from "linksmith";
 import { promisify } from "util";
